@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Sorry, Lili</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,500&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg-1:#faf3e7;
+    --bg-2:#f2e6d3;
+    --text-main:#4a3540;
+    --text-soft:#7a6360;
+    --berenjena:#6d2f52;
+    --rose:#c9749a;
+    --rose-light:#f2c9da;
+    --gold:#c9a24a;
+    --sage:#889b70;
+    --sage-dark:#5c7048;
+    --btn-shadow: 0 10px 28px rgba(109,47,82,.28);
+  }
+
+  *{ box-sizing:border-box; }
+
+  html,body{
+    height:100%;
+    margin:0;
+  }
+
+  body{
+    min-height:100svh;
+    min-height:100vh;
+    font-family:'Jost', sans-serif;
+    color:var(--text-main);
+    background:
+      radial-gradient(circle at 50% 0%, #fffaf1 0%, var(--bg-1) 45%, var(--bg-2) 100%);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    overflow:hidden;
+  }
+
+  .stage{
+    position:relative;
+    width:100%;
+    max-width:520px;
+    min-height:100svh;
+    min-height:100vh;
+    margin:0 auto;
+    padding:24px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+
+  /* ---------- language switcher ---------- */
+  .lang-switch{
+    position:fixed;
+    top:16px;
+    right:16px;
+    display:flex;
+    gap:6px;
+    z-index:20;
+    background:rgba(255,251,244,.7);
+    backdrop-filter: blur(6px);
+    padding:5px;
+    border-radius:999px;
+    box-shadow:0 4px 14px rgba(109,47,82,.10);
+  }
+
+  .lang-switch button{
+    font-family:'Jost', sans-serif;
+    font-size:12px;
+    letter-spacing:.05em;
+    font-weight:500;
+    border:none;
+    background:transparent;
+    color:var(--text-soft);
+    padding:6px 11px;
+    border-radius:999px;
+    cursor:pointer;
+    transition: background .25s ease, color .25s ease;
+  }
+
+  .lang-switch button.active{
+    background:var(--berenjena);
+    color:#fff8f0;
+  }
+
+  .lang-switch button:not(.active):hover{
+    background:rgba(109,47,82,.10);
+  }
+
+  /* ---------- screens ---------- */
+  .screen{
+    position:absolute;
+    inset:0;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    padding:32px 20px;
+    opacity:0;
+    pointer-events:none;
+    transition: opacity 1s ease;
+  }
+
+  .screen.active{
+    opacity:1;
+    pointer-events:auto;
+  }
+
+  .msg{
+    font-family:'Cormorant Garamond', serif;
+    font-weight:500;
+    font-size:clamp(1.5rem, 6vw, 2.1rem);
+    line-height:1.35;
+    color:var(--text-main);
+    max-width:22ch;
+    margin:0 0 36px;
+  }
+
+  .msg-small{
+    margin:22px 0 0;
+    font-size:clamp(1.2rem, 5vw, 1.6rem);
+  }
+
+  .btn{
+    font-family:'Jost', sans-serif;
+    font-size:1rem;
+    font-weight:500;
+    letter-spacing:.04em;
+    color:#fff8f0;
+    background:linear-gradient(135deg, var(--rose), var(--berenjena));
+    border:none;
+    padding:16px 42px;
+    border-radius:999px;
+    cursor:pointer;
+    box-shadow:var(--btn-shadow);
+    transition: transform .2s ease, box-shadow .2s ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .btn:hover{
+    transform:translateY(-2px);
+    box-shadow:0 14px 32px rgba(109,47,82,.34);
+  }
+
+  .btn:active{
+    transform:translateY(0px) scale(.97);
+  }
+
+  /* ---------- flower ---------- */
+  .flower-wrap{
+    width:min(78vw, 300px);
+    filter: drop-shadow(0 18px 24px rgba(109,47,82,.16));
+  }
+
+  .lily-svg{
+    width:100%;
+    height:auto;
+    display:block;
+    overflow:visible;
+  }
+
+  .plant{
+    transform-box: view-box;
+    transform-origin: 150px 392px;
+  }
+
+  #screen2.swaying .plant{
+    animation: sway 5.5s ease-in-out infinite;
+  }
+
+  @keyframes sway{
+    0%   { transform: rotate(-2deg); }
+    50%  { transform: rotate(2.2deg); }
+    100% { transform: rotate(-2deg); }
+  }
+
+  .petal-rotate{
+    transform-box: view-box;
+    transform-origin: 0 0;
+  }
+
+  .petal-bloom{
+    transform-box: view-box;
+    transform-origin: 0 0;
+    transform: scale(.14);
+    opacity:.5;
+  }
+
+  #screen2.opened .petal-bloom{
+    animation: bloom 1.3s cubic-bezier(.31,1.4,.5,1) forwards;
+  }
+
+  .p1 .petal-bloom{ animation-delay: 0s; }
+  .p2 .petal-bloom{ animation-delay: .14s; }
+  .p3 .petal-bloom{ animation-delay: .28s; }
+  .p4 .petal-bloom{ animation-delay: .42s; }
+  .p5 .petal-bloom{ animation-delay: .56s; }
+  .p6 .petal-bloom{ animation-delay: .7s; }
+
+  @keyframes bloom{
+    0%   { transform: scale(.14); opacity:.5; }
+    60%  { opacity:1; }
+    100% { transform: scale(1); opacity:1; }
+  }
+
+  .stamens{
+    transform-box: view-box;
+    transform-origin: 150px 150px;
+    opacity:0;
+  }
+
+  #screen2.opened .stamens{
+    animation: fadeIn 1s ease forwards;
+    animation-delay: .95s;
+  }
+
+  @keyframes fadeIn{
+    to{ opacity:1; }
+  }
+
+  footer.credit{
+    position:fixed;
+    bottom:10px;
+    left:0;
+    right:0;
+    text-align:center;
+    font-size:11px;
+    letter-spacing:.04em;
+    color:var(--text-soft);
+    opacity:.55;
+    pointer-events:none;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .screen{ transition: opacity .4s linear; }
+    .petal-bloom{ transform: scale(1); opacity:1; }
+    #screen2.opened .petal-bloom{ animation: none; }
+    .stamens{ opacity:1; }
+    #screen2.opened .stamens{ animation: none; }
+    #screen2.swaying .plant{ animation: none; }
+  }
+</style>
+</head>
+<body>
+
+  <div class="lang-switch" role="group" aria-label="Language">
+    <button type="button" data-lang="es">ES</button>
+    <button type="button" data-lang="en">EN</button>
+    <button type="button" data-lang="hu">HU</button>
+  </div>
+
+  <main class="stage">
+
+    <section id="screen1" class="screen active">
+      <p class="msg" data-i18n="screen1"></p>
+      <button id="openBtn" class="btn" type="button" data-i18n="button"></button>
+    </section>
+
+    <section id="screen2" class="screen">
+      <div class="flower-wrap">
+        <svg class="lily-svg" viewBox="0 0 300 400" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <defs>
+            <linearGradient id="petalInner" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%"  stop-color="#7d3258"/>
+              <stop offset="45%" stop-color="#d688a8"/>
+              <stop offset="100%" stop-color="#fdf3ec"/>
+            </linearGradient>
+            <linearGradient id="petalOuter" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%"  stop-color="#5f2544"/>
+              <stop offset="45%" stop-color="#c26f92"/>
+              <stop offset="100%" stop-color="#fbeee2"/>
+            </linearGradient>
+            <linearGradient id="stemGrad" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%"  stop-color="#5c7048"/>
+              <stop offset="100%" stop-color="#8a9b70"/>
+            </linearGradient>
+          </defs>
+
+          <g class="plant">
+            <!-- stem -->
+            <path d="M150,392 C148,320 152,230 150,152" fill="none" stroke="url(#stemGrad)" stroke-width="6" stroke-linecap="round"/>
+
+            <!-- leaves -->
+            <path d="M150,300 C118,292 92,304 74,332 C104,332 132,322 150,300 Z" fill="var(--sage)"/>
+            <path d="M150,255 C184,244 210,254 228,280 C198,284 170,276 150,255 Z" fill="var(--sage-dark)"/>
+
+            <!-- flower -->
+            <g class="flower">
+
+              <!-- outer tepals -->
+              <g class="petal-rotate p1" transform="translate(150 150) rotate(-90)">
+                <g class="petal-bloom">
+                  <path d="M0,0 C-19,-20 -32,-48 -29,-80 C-26,-106 -13,-124 0,-132 C13,-124 26,-106 29,-80 C32,-48 19,-20 0,0 Z" fill="url(#petalOuter)"/>
+                </g>
+              </g>
+              <g class="petal-rotate p3" transform="translate(150 150) rotate(30)">
+                <g class="petal-bloom">
+                  <path d="M0,0 C-19,-20 -32,-48 -29,-80 C-26,-106 -13,-124 0,-132 C13,-124 26,-106 29,-80 C32,-48 19,-20 0,0 Z" fill="url(#petalOuter)"/>
+                </g>
+              </g>
+              <g class="petal-rotate p5" transform="translate(150 150) rotate(150)">
+                <g class="petal-bloom">
+                  <path d="M0,0 C-19,-20 -32,-48 -29,-80 C-26,-106 -13,-124 0,-132 C13,-124 26,-106 29,-80 C32,-48 19,-20 0,0 Z" fill="url(#petalOuter)"/>
+                </g>
+              </g>
+
+              <!-- inner tepals -->
+              <g class="petal-rotate p2" transform="translate(150 150) rotate(-30)">
+                <g class="petal-bloom">
+                  <path d="M0,0 C-16,-18 -27,-42 -25,-70 C-22,-93 -11,-108 0,-115 C11,-108 22,-93 25,-70 C27,-42 16,-18 0,0 Z" fill="url(#petalInner)"/>
+                </g>
+              </g>
+              <g class="petal-rotate p4" transform="translate(150 150) rotate(90)">
+                <g class="petal-bloom">
+                  <path d="M0,0 C-16,-18 -27,-42 -25,-70 C-22,-93 -11,-108 0,-115 C11,-108 22,-93 25,-70 C27,-42 16,-18 0,0 Z" fill="url(#petalInner)"/>
+                </g>
+              </g>
+              <g class="petal-rotate p6" transform="translate(150 150) rotate(210)">
+                <g class="petal-bloom">
+                  <path d="M0,0 C-16,-18 -27,-42 -25,-70 C-22,-93 -11,-108 0,-115 C11,-108 22,-93 25,-70 C27,-42 16,-18 0,0 Z" fill="url(#petalInner)"/>
+                </g>
+              </g>
+
+              <!-- stamens -->
+              <g class="stamens">
+                <path d="M150,150 C142,130 132,112 120,100" fill="none" stroke="var(--gold)" stroke-width="2"/>
+                <ellipse cx="118" cy="97" rx="5" ry="3" fill="var(--gold)" transform="rotate(-35 118 97)"/>
+                <path d="M150,150 C152,126 152,104 150,84" fill="none" stroke="var(--gold)" stroke-width="2"/>
+                <ellipse cx="150" cy="80" rx="5" ry="3" fill="var(--gold)"/>
+                <path d="M150,150 C158,130 168,112 180,100" fill="none" stroke="var(--gold)" stroke-width="2"/>
+                <ellipse cx="182" cy="97" rx="5" ry="3" fill="var(--gold)" transform="rotate(35 182 97)"/>
+                <path d="M150,150 C144,134 138,120 130,110" fill="none" stroke="var(--gold)" stroke-width="1.6"/>
+                <ellipse cx="128" cy="107" rx="4" ry="2.6" fill="var(--gold)" transform="rotate(-30 128 107)"/>
+                <path d="M150,150 C156,134 162,120 170,110" fill="none" stroke="var(--gold)" stroke-width="1.6"/>
+                <ellipse cx="172" cy="107" rx="4" ry="2.6" fill="var(--gold)" transform="rotate(30 172 107)"/>
+                <circle cx="150" cy="150" r="6" fill="var(--berenjena)"/>
+              </g>
+
+            </g>
+          </g>
+        </svg>
+      </div>
+      <p class="msg msg-small" data-i18n="screen2"></p>
+    </section>
+
+  </main>
+
+  <footer class="credit" data-i18n="credit"></footer>
+
+<script>
+(function(){
+  "use strict";
+
+  var translations = {
+    es: {
+      screen1: "You a little gift, don't be mad...",
+      button: "Ábrelo",
+      screen2: "acepta, este Lili como disculpas...",
+      credit: "hecho con cariño"
+    },
+    en: {
+      screen1: "You a little gift, don't be mad...",
+      button: "Open it",
+      screen2: "accept this Lily as an apology...",
+      credit: "made with love"
+    },
+    hu: {
+      screen1: "Egy kis ajándék neked, ne haragudj...",
+      button: "Nyisd ki",
+      screen2: "fogadd el ezt a liliomot bocsánatkérésként...",
+      credit: "szeretettel készült"
+    }
+  };
+
+  var supported = Object.keys(translations);
+  var STORAGE_KEY = "sorrylili-lang";
+
+  function detectLang(){
+    try{
+      var saved = localStorage.getItem(STORAGE_KEY);
+      if(saved && translations[saved]) return saved;
+    }catch(e){}
+
+    var nav = (navigator.language || "es").toLowerCase();
+    for(var i=0; i<supported.length; i++){
+      if(nav.indexOf(supported[i]) === 0) return supported[i];
+    }
+    return "es";
+  }
+
+  function setLang(lang){
+    if(!translations[lang]) lang = "es";
+    var dict = translations[lang];
+
+    document.querySelectorAll("[data-i18n]").forEach(function(el){
+      var key = el.getAttribute("data-i18n");
+      if(dict[key] !== undefined) el.textContent = dict[key];
+    });
+
+    document.querySelectorAll(".lang-switch button").forEach(function(btn){
+      btn.classList.toggle("active", btn.getAttribute("data-lang") === lang);
+    });
+
+    document.documentElement.setAttribute("lang", lang);
+
+    try{ localStorage.setItem(STORAGE_KEY, lang); }catch(e){}
+  }
+
+  document.querySelectorAll(".lang-switch button").forEach(function(btn){
+    btn.addEventListener("click", function(){
+      setLang(btn.getAttribute("data-lang"));
+    });
+  });
+
+  setLang(detectLang());
+
+  var screen1 = document.getElementById("screen1");
+  var screen2 = document.getElementById("screen2");
+  var openBtn = document.getElementById("openBtn");
+  var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  openBtn.addEventListener("click", function(){
+    screen1.classList.remove("active");
+    screen2.classList.add("active");
+    screen2.classList.add("opened");
+
+    if(reduceMotion){
+      screen2.classList.add("swaying");
+    }else{
+      window.setTimeout(function(){
+        screen2.classList.add("swaying");
+      }, 1650);
+    }
+  }, { once:true });
+
+})();
+</script>
+
+</body>
+</html>
