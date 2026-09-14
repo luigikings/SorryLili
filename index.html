@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="hu">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -128,6 +128,72 @@
     font-size:clamp(1.2rem, 5vw, 1.6rem);
   }
 
+  /* ---------- confirm box ---------- */
+  .confirm-box{
+    margin-top:26px;
+    opacity:0;
+    transform:translateY(10px);
+  }
+
+  #screen2.opened .confirm-box{
+    animation: fadeInUp .8s ease forwards;
+    animation-delay: 1.9s;
+  }
+
+  @keyframes fadeInUp{
+    to{ opacity:1; transform:translateY(0); }
+  }
+
+  .question{
+    font-family:'Cormorant Garamond', serif;
+    font-weight:500;
+    font-size:clamp(1.1rem, 4.5vw, 1.35rem);
+    margin:0 0 16px;
+    color:var(--text-main);
+  }
+
+  .thanks-msg{
+    display:none;
+    font-family:'Cormorant Garamond', serif;
+    font-size:clamp(1.2rem, 4.5vw, 1.5rem);
+    color:var(--berenjena);
+    margin:0;
+  }
+
+  .confirm-buttons{
+    display:flex;
+    gap:14px;
+    justify-content:center;
+  }
+
+  .btn-yes, .btn-no{
+    padding:12px 28px;
+    font-size:.92rem;
+  }
+
+  .btn-no{
+    background:transparent;
+    border:1.5px solid rgba(122,99,96,.35);
+    color:var(--text-soft);
+    box-shadow:none;
+  }
+
+  .btn-no.dodging{
+    position:fixed;
+    z-index:30;
+    transition: left .28s ease, top .28s ease;
+  }
+
+  .confirm-box.accepted .question,
+  .confirm-box.accepted .confirm-buttons{
+    display:none;
+  }
+
+  .confirm-box.accepted .thanks-msg{
+    display:block;
+    animation: fadeInUp .6s ease;
+  }
+
   .btn{
     font-family:'Jost', sans-serif;
     font-size:1rem;
@@ -245,6 +311,9 @@
     .stamens{ opacity:1; }
     #screen2.opened .stamens{ animation: none; }
     #screen2.swaying .plant{ animation: none; }
+    .confirm-box{ opacity:1; transform:none; }
+    #screen2.opened .confirm-box{ animation: none; }
+    .btn-no.dodging{ transition: none; }
   }
 </style>
 </head>
@@ -348,6 +417,15 @@
         </svg>
       </div>
       <p class="msg msg-small" data-i18n="screen2"></p>
+
+      <div class="confirm-box" id="confirmBox">
+        <p class="question" data-i18n="question"></p>
+        <div class="confirm-buttons">
+          <button type="button" class="btn btn-yes" id="yesBtn" data-i18n="yes"></button>
+          <button type="button" class="btn btn-no" id="noBtn" data-i18n="no"></button>
+        </div>
+        <p class="thanks-msg" data-i18n="thanks"></p>
+      </div>
     </section>
 
   </main>
@@ -360,26 +438,38 @@
 
   var translations = {
     es: {
-      screen1: "You a little gift, don't be mad...",
+      screen1: "Disculpa 😢, aquí tienes un regalo en compensación",
       button: "Ábrelo",
       screen2: "acepta, este Lili como disculpas...",
+      question: "¿Aceptas mis disculpas?",
+      yes: "Sí",
+      no: "No",
+      thanks: "Gracias 💕",
       credit: "hecho con cariño"
     },
     en: {
-      screen1: "You a little gift, don't be mad...",
+      screen1: "Sorry 😢, here's a gift to make up for it",
       button: "Open it",
       screen2: "accept this Lily as an apology...",
+      question: "Do you accept my apology?",
+      yes: "Yes",
+      no: "No",
+      thanks: "Thank you 💕",
       credit: "made with love"
     },
     hu: {
-      screen1: "Egy kis ajándék neked, ne haragudj...",
+      screen1: "Bocsánat 😢, itt egy ajándék kárpótlásul",
       button: "Nyisd ki",
       screen2: "fogadd el ezt a liliomot bocsánatkérésként...",
+      question: "Elfogadod a bocsánatkérésem?",
+      yes: "Igen",
+      no: "Nem",
+      thanks: "Köszönöm 💕",
       credit: "szeretettel készült"
     }
   };
 
-  var supported = Object.keys(translations);
+  var DEFAULT_LANG = "hu";
   var STORAGE_KEY = "sorrylili-lang";
 
   function detectLang(){
@@ -388,11 +478,7 @@
       if(saved && translations[saved]) return saved;
     }catch(e){}
 
-    var nav = (navigator.language || "es").toLowerCase();
-    for(var i=0; i<supported.length; i++){
-      if(nav.indexOf(supported[i]) === 0) return supported[i];
-    }
-    return "es";
+    return DEFAULT_LANG;
   }
 
   function setLang(lang){
@@ -424,6 +510,9 @@
   var screen1 = document.getElementById("screen1");
   var screen2 = document.getElementById("screen2");
   var openBtn = document.getElementById("openBtn");
+  var confirmBox = document.getElementById("confirmBox");
+  var yesBtn = document.getElementById("yesBtn");
+  var noBtn = document.getElementById("noBtn");
   var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   openBtn.addEventListener("click", function(){
@@ -439,6 +528,37 @@
       }, 1650);
     }
   }, { once:true });
+
+  function dodgeNo(e){
+    if(e && e.cancelable) e.preventDefault();
+
+    if(!noBtn.classList.contains("dodging")){
+      var rect = noBtn.getBoundingClientRect();
+      noBtn.classList.add("dodging");
+      noBtn.style.left = rect.left + "px";
+      noBtn.style.top = rect.top + "px";
+      void noBtn.offsetWidth;
+    }
+
+    var pad = 16;
+    var w = noBtn.offsetWidth;
+    var h = noBtn.offsetHeight;
+    var maxX = Math.max(pad, window.innerWidth - w - pad);
+    var maxY = Math.max(pad, window.innerHeight - h - pad);
+    var x = pad + Math.random() * (maxX - pad);
+    var y = pad + Math.random() * (maxY - pad);
+
+    noBtn.style.left = x + "px";
+    noBtn.style.top = y + "px";
+  }
+
+  noBtn.addEventListener("pointerenter", dodgeNo);
+  noBtn.addEventListener("touchstart", dodgeNo, { passive:false });
+  noBtn.addEventListener("click", dodgeNo);
+
+  yesBtn.addEventListener("click", function(){
+    confirmBox.classList.add("accepted");
+  });
 
 })();
 </script>
