@@ -153,7 +153,6 @@
   }
 
   .thanks-msg{
-    display:none;
     font-family:'Cormorant Garamond', serif;
     font-size:clamp(1.2rem, 4.5vw, 1.5rem);
     color:var(--berenjena);
@@ -184,14 +183,74 @@
     transition: left .28s ease, top .28s ease;
   }
 
+  .accepted-content{
+    display:none;
+  }
+
   .confirm-box.accepted .question,
   .confirm-box.accepted .confirm-buttons{
     display:none;
   }
 
-  .confirm-box.accepted .thanks-msg{
+  .confirm-box.accepted .accepted-content{
     display:block;
     animation: fadeInUp .6s ease;
+  }
+
+  .mood-box{
+    margin-top:24px;
+  }
+
+  .mood-title{
+    font-family:'Cormorant Garamond', serif;
+    font-weight:500;
+    font-size:clamp(1.05rem, 4.2vw, 1.2rem);
+    margin:0 0 14px;
+    color:var(--text-main);
+  }
+
+  .mood-options{
+    display:flex;
+    gap:10px;
+    justify-content:center;
+    margin-bottom:14px;
+  }
+
+  .mood-btn{
+    width:50px;
+    height:50px;
+    padding:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:1.5rem;
+    line-height:1;
+    background:rgba(255,255,255,.55);
+    border:1.5px solid transparent;
+    border-radius:50%;
+    cursor:pointer;
+    transition: transform .15s ease, border-color .15s ease, background .15s ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .mood-btn:hover{
+    transform:translateY(-2px);
+  }
+
+  .mood-btn.selected{
+    border-color:var(--rose);
+    background:#fffaf3;
+    transform:scale(1.08);
+  }
+
+  .mood-response{
+    font-family:'Jost', sans-serif;
+    font-size:.92rem;
+    line-height:1.55;
+    color:var(--text-soft);
+    min-height:1.4em;
+    max-width:30ch;
+    margin:0 auto;
   }
 
   .btn{
@@ -424,7 +483,19 @@
           <button type="button" class="btn btn-yes" id="yesBtn" data-i18n="yes"></button>
           <button type="button" class="btn btn-no" id="noBtn" data-i18n="no"></button>
         </div>
-        <p class="thanks-msg" data-i18n="thanks"></p>
+        <div class="accepted-content">
+          <p class="thanks-msg" data-i18n="thanks"></p>
+          <div class="mood-box">
+            <p class="mood-title" data-i18n="moodTitle"></p>
+            <div class="mood-options">
+              <button type="button" class="mood-btn" data-mood="sick">🤒</button>
+              <button type="button" class="mood-btn" data-mood="tired">😴</button>
+              <button type="button" class="mood-btn" data-mood="down">😔</button>
+              <button type="button" class="mood-btn" data-mood="good">🥰</button>
+            </div>
+            <p class="mood-response" id="moodResponse"></p>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -435,7 +506,7 @@
 <script>
 (function(){
   // bump this together with version.json on every content update
-  var CURRENT_VERSION = 1;
+  var CURRENT_VERSION = 2;
 
   fetch('version.json?_=' + Date.now(), { cache: 'no-store' })
     .then(function(res){ return res.ok ? res.json() : null; })
@@ -460,6 +531,11 @@
       yes: "Sí",
       no: "No",
       thanks: "Gracias 💕",
+      moodTitle: "¿Cómo te sientes hoy?",
+      response_sick: "Métete en la cama y descansa, yo te cuido desde aquí. Te quiero mucho 🥺",
+      response_tired: "Duerme todo lo que necesites, no hay prisa. Aquí estaré cuando despiertes 💤",
+      response_down: "Ven aquí, te mando un abrazo enorme. Esto va a mejorar, lo prometo 🤍",
+      response_good: "¡Esa sonrisa me alegra el día! Sigamos así, cada vez mejor 🌸",
       credit: "hecho con cariño"
     },
     en: {
@@ -470,6 +546,11 @@
       yes: "Yes",
       no: "No",
       thanks: "Thank you 💕",
+      moodTitle: "How are you feeling today?",
+      response_sick: "Curl up in bed and rest, I've got you from here. Love you so much 🥺",
+      response_tired: "Sleep as much as you need, no rush at all. I'll be here when you wake up 💤",
+      response_down: "Come here, sending you a huge hug. This will get better, I promise 🤍",
+      response_good: "That smile makes my whole day! Let's keep going, better and better 🌸",
       credit: "made with love"
     },
     hu: {
@@ -480,12 +561,19 @@
       yes: "Igen",
       no: "Nem",
       thanks: "Köszönöm 💕",
+      moodTitle: "Hogy érzed magad ma?",
+      response_sick: "Bújj be az ágyba és pihenj, innen vigyázok rád. Nagyon szeretlek 🥺",
+      response_tired: "Aludj annyit, amennyire szükséged van, semmi sietség. Itt leszek, amikor felébredsz 💤",
+      response_down: "Gyere ide, küldök egy hatalmas ölelést. Ez jobb lesz, ígérem 🤍",
+      response_good: "Az a mosoly felderíti a napomat! Menjünk így tovább, egyre jobban 🌸",
       credit: "szeretettel készült"
     }
   };
 
   var DEFAULT_LANG = "hu";
   var STORAGE_KEY = "sorrylili-lang";
+  var currentLang = DEFAULT_LANG;
+  var selectedMood = null;
 
   function detectLang(){
     try{
@@ -496,8 +584,15 @@
     return DEFAULT_LANG;
   }
 
+  function renderMoodResponse(){
+    if(!selectedMood) return;
+    var moodResponse = document.getElementById("moodResponse");
+    moodResponse.textContent = translations[currentLang]["response_" + selectedMood] || "";
+  }
+
   function setLang(lang){
     if(!translations[lang]) lang = "es";
+    currentLang = lang;
     var dict = translations[lang];
 
     document.querySelectorAll("[data-i18n]").forEach(function(el){
@@ -512,6 +607,8 @@
     document.documentElement.setAttribute("lang", lang);
 
     try{ localStorage.setItem(STORAGE_KEY, lang); }catch(e){}
+
+    renderMoodResponse();
   }
 
   document.querySelectorAll(".lang-switch button").forEach(function(btn){
@@ -573,6 +670,16 @@
 
   yesBtn.addEventListener("click", function(){
     confirmBox.classList.add("accepted");
+  });
+
+  document.querySelectorAll(".mood-btn").forEach(function(btn){
+    btn.addEventListener("click", function(){
+      selectedMood = btn.dataset.mood;
+      document.querySelectorAll(".mood-btn").forEach(function(b){
+        b.classList.toggle("selected", b === btn);
+      });
+      renderMoodResponse();
+    });
   });
 
 })();
