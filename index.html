@@ -15,7 +15,9 @@
     --text-soft:#7a6360;
     --berenjena:#6d2f52;
     --rose:#c9749a;
+    --gold:#c9a24a;
     --sage:#889b70;
+    --sage-dark:#5c7048;
     --btn-shadow: 0 10px 28px rgba(109,47,82,.22);
 
     --koala-body:#a6a9ad;
@@ -24,6 +26,9 @@
     --koala-muzzle:#efe7da;
     --koala-nose:#3d3638;
     --koala-blush:#f0a8b7;
+
+    --petal-inner:#d688a8;
+    --petal-outer:#7d3258;
   }
 
   *{ box-sizing:border-box; }
@@ -45,11 +50,51 @@
     width:100%;
     max-width:480px;
     margin:0 auto;
-    padding:76px 20px 60px;
+    padding:18vh 20px 50px;
     display:flex;
     flex-direction:column;
     align-items:center;
     text-align:center;
+    transition: padding-top .6s ease;
+  }
+
+  .stage.compact{ padding-top:8vh; }
+
+  /* ---------- loading screen ---------- */
+  .loading-screen{
+    position:fixed;
+    inset:0;
+    z-index:50;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:18px;
+    background: radial-gradient(circle at 50% 40%, #fffaf1 0%, var(--bg-1) 55%, var(--bg-2) 100%);
+    transition: opacity .6s ease;
+  }
+
+  .loading-screen.hide{
+    opacity:0;
+    pointer-events:none;
+  }
+
+  .spinner{
+    width:52px;
+    height:52px;
+    border-radius:50%;
+    border:4px solid rgba(109,47,82,.15);
+    border-top-color:var(--berenjena);
+    animation: spin .9s linear infinite;
+  }
+
+  @keyframes spin{ to{ transform:rotate(360deg); } }
+
+  .loading-screen p{
+    font-family:'Cormorant Garamond', serif;
+    font-size:1.05rem;
+    color:var(--text-soft);
+    margin:0;
   }
 
   /* ---------- language switcher ---------- */
@@ -68,35 +113,40 @@
   }
 
   .lang-switch button{
-    font-family:'Jost', sans-serif;
-    font-size:12px;
-    letter-spacing:.05em;
-    font-weight:500;
+    font-size:19px;
+    line-height:1;
     border:none;
     background:transparent;
-    color:var(--text-soft);
-    padding:6px 11px;
+    padding:6px 8px;
     border-radius:999px;
     cursor:pointer;
-    transition: background .25s ease, color .25s ease;
+    opacity:.55;
+    transform:scale(.92);
+    transition: opacity .2s ease, transform .2s ease, background .2s ease;
   }
 
   .lang-switch button.active{
-    background:var(--berenjena);
-    color:#fff8f0;
+    opacity:1;
+    transform:scale(1);
+    background:rgba(109,47,82,.12);
   }
 
-  .lang-switch button:not(.active):hover{
-    background:rgba(109,47,82,.10);
+  /* ---------- intro block ---------- */
+  .intro-block{
+    transition: margin .5s ease;
   }
 
-  /* ---------- heading ---------- */
   .heading{
     font-family:'Cormorant Garamond', serif;
     font-weight:600;
     font-size:clamp(1.6rem, 7vw, 2.2rem);
     margin:0 0 8px;
     color:var(--text-main);
+    transition: font-size .5s ease;
+  }
+
+  .stage.compact .heading{
+    font-size:clamp(1.25rem, 5.5vw, 1.6rem);
   }
 
   .subtext{
@@ -105,6 +155,15 @@
     color:var(--text-soft);
     margin:0 0 26px;
     min-height:1.3em;
+    transition: opacity .3s ease, margin .3s ease, max-height .3s ease;
+    overflow:hidden;
+  }
+
+  .subtext.gone{
+    opacity:0;
+    margin:0;
+    max-height:0;
+    min-height:0;
   }
 
   /* ---------- mood buttons ---------- */
@@ -113,7 +172,6 @@
     flex-wrap:wrap;
     gap:10px;
     justify-content:center;
-    margin-bottom:30px;
   }
 
   .mood-btn{
@@ -129,8 +187,14 @@
     border:1.5px solid transparent;
     border-radius:50%;
     cursor:pointer;
-    transition: transform .15s ease, border-color .15s ease, background .15s ease;
+    transition: transform .15s ease, border-color .15s ease, background .15s ease, width .4s ease, height .4s ease, font-size .4s ease;
     -webkit-tap-highlight-color: transparent;
+  }
+
+  .stage.compact .mood-btn{
+    width:46px;
+    height:46px;
+    font-size:1.4rem;
   }
 
   .mood-btn:hover{ transform:translateY(-2px); }
@@ -141,32 +205,51 @@
     transform:scale(1.1);
   }
 
-  /* ---------- koala ---------- */
+  /* ---------- koala scene ---------- */
+  .koala-scene{
+    width:100%;
+    max-height:0;
+    opacity:0;
+    overflow:hidden;
+    transition: max-height .7s ease, opacity .6s ease, margin-top .6s ease;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+  }
+
+  .koala-scene.revealed{
+    max-height:900px;
+    opacity:1;
+    margin-top:22px;
+  }
+
+  .koala-scene.leaving{
+    max-height:0;
+    opacity:0;
+    margin-top:0;
+  }
+
   .koala-breathe{
-    width:min(72vw, 280px);
+    width:min(66vw, 250px);
     filter: drop-shadow(0 16px 22px rgba(109,47,82,.16));
     animation: idleBreathe 4s ease-in-out infinite;
   }
 
   .koala-wrap{ cursor:pointer; }
-
   .koala-wrap.pop{ animation: popBounce .55s ease; }
   .koala-wrap.poked{ animation: wiggle .5s ease; }
-
   .koala-svg{ width:100%; height:auto; display:block; overflow:visible; }
 
   @keyframes idleBreathe{
     0%, 100%{ transform:scale(1); }
     50%{ transform:scale(1.02); }
   }
-
   @keyframes popBounce{
     0%{ transform:scale(.85) rotate(0); }
     40%{ transform:scale(1.1) rotate(-3deg); }
     70%{ transform:scale(.97) rotate(2deg); }
     100%{ transform:scale(1) rotate(0); }
   }
-
   @keyframes wiggle{
     0%, 100%{ transform:rotate(0); }
     20%{ transform:rotate(-8deg); }
@@ -175,15 +258,35 @@
     80%{ transform:rotate(3deg); }
   }
 
-  .koala-face{ display:none; }
-  #koalaSvg.mood-idle .face-idle,
-  #koalaSvg.mood-sad .face-sad,
-  #koalaSvg.mood-happy .face-happy,
-  #koalaSvg.mood-angry .face-angry,
-  #koalaSvg.mood-sleepy .face-sleepy,
-  #koalaSvg.mood-sick .face-sick{
-    display:block;
+  /* koala part-by-part draw-in (plays once) */
+  .draw-part{
+    opacity:0;
+    transform:scale(.4);
+    transform-box: view-box;
+    transform-origin: center;
   }
+  .koala-scene.drawn .draw-part{
+    animation: partReveal .55s cubic-bezier(.31,1.4,.5,1) forwards;
+  }
+  .koala-scene.drawn .part-1{ animation-delay:0s; }
+  .koala-scene.drawn .part-2{ animation-delay:.12s; }
+  .koala-scene.drawn .part-3{ animation-delay:.24s; }
+  .koala-scene.drawn .part-4{ animation-delay:.36s; }
+  .koala-scene.drawn .part-5{ animation-delay:.48s; }
+  .koala-scene.drawn .part-6{ animation-delay:.6s; }
+
+  @keyframes partReveal{
+    0%{ opacity:0; transform:scale(.4); }
+    60%{ opacity:1; }
+    100%{ opacity:1; transform:scale(1); }
+  }
+
+  /* crossfade between mood faces */
+  .koala-face{
+    opacity:0;
+    transition: opacity .45s ease;
+  }
+  .koala-face.active{ opacity:1; }
 
   @keyframes dripTear{
     0%{ transform:translateY(0); opacity:1; }
@@ -191,6 +294,12 @@
     100%{ transform:translateY(16px); opacity:0; }
   }
   .face-sad .tear{ animation: dripTear 1.7s ease-in infinite; }
+
+  @keyframes blinkIdle{
+    0%, 88%, 100%{ transform:scaleY(1); }
+    92%{ transform:scaleY(.1); }
+  }
+  .face-idle .eye{ animation: blinkIdle 4.5s ease-in-out infinite; transform-box:fill-box; transform-origin:center; }
 
   @keyframes floatZzz{
     0%{ transform:translateY(0); opacity:0; }
@@ -220,13 +329,192 @@
   /* ---------- response ---------- */
   .response{
     font-family:'Cormorant Garamond', serif;
-    font-size:clamp(1.15rem, 4.6vw, 1.4rem);
+    font-size:clamp(1.1rem, 4.4vw, 1.35rem);
     line-height:1.5;
     color:var(--berenjena);
     max-width:26ch;
-    margin:26px 0 0;
-    min-height:1.6em;
+    margin:22px 0 0;
+    min-height:1.5em;
+    opacity:0;
+    transform:translateY(8px);
+    transition: opacity .4s ease, transform .4s ease;
   }
+  .response.show{ opacity:1; transform:translateY(0); }
+
+  /* ---------- angry sub-box ---------- */
+  .angry-box{
+    margin-top:20px;
+    max-height:0;
+    opacity:0;
+    overflow:hidden;
+    transition: max-height .5s ease, opacity .4s ease, margin-top .4s ease;
+  }
+  .angry-box.show{
+    max-height:260px;
+    opacity:1;
+  }
+
+  .angry-question{
+    font-family:'Cormorant Garamond', serif;
+    font-size:1.1rem;
+    margin:0 0 12px;
+    color:var(--text-main);
+  }
+
+  .angry-buttons{ display:flex; gap:12px; justify-content:center; }
+
+  .angry-buttons button{
+    font-family:'Jost', sans-serif;
+    font-size:.9rem;
+    font-weight:500;
+    padding:10px 24px;
+    border-radius:999px;
+    cursor:pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  #angryYes{
+    border:none;
+    color:#fff8f0;
+    background:linear-gradient(135deg, var(--rose), var(--berenjena));
+    box-shadow:var(--btn-shadow);
+  }
+
+  #angryNo{
+    background:transparent;
+    border:1.5px solid rgba(122,99,96,.35);
+    color:var(--text-soft);
+  }
+
+  .angry-calm{
+    font-family:'Cormorant Garamond', serif;
+    font-size:1.1rem;
+    color:var(--berenjena);
+    margin:14px 0 0;
+    opacity:0;
+    transition: opacity .4s ease;
+  }
+  .angry-calm.show{ opacity:1; }
+
+  /* ---------- lily scene ---------- */
+  .lily-scene{
+    width:100%;
+    max-height:0;
+    opacity:0;
+    overflow:hidden;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    transition: max-height .8s ease, opacity .7s ease, margin-top .6s ease;
+  }
+  .lily-scene.show{
+    max-height:900px;
+    opacity:1;
+    margin-top:10px;
+  }
+
+  .lily-wrap{
+    width:min(72vw, 280px);
+    filter: drop-shadow(0 18px 24px rgba(109,47,82,.16));
+    position:relative;
+  }
+
+  .lily-svg{ width:100%; height:auto; display:block; overflow:visible; }
+
+  .lily-plant{
+    transform-box: view-box;
+    transform-origin: 150px 392px;
+  }
+  .lily-scene.swaying .lily-plant{
+    animation: lilySway 5.5s ease-in-out infinite;
+  }
+  @keyframes lilySway{
+    0%{ transform:rotate(-2deg); }
+    50%{ transform:rotate(2.2deg); }
+    100%{ transform:rotate(-2deg); }
+  }
+
+  .petal-rotate{ transform-box:view-box; transform-origin:0 0; }
+  .petal-bloom{
+    transform-box:view-box;
+    transform-origin:0 0;
+    transform:scale(.14);
+    opacity:.5;
+  }
+  .lily-scene.drawn .petal-bloom{
+    animation: petalBloom 1.2s cubic-bezier(.31,1.4,.5,1) forwards;
+  }
+  .lp0 .petal-bloom{ animation-delay:0s; }
+  .lp1 .petal-bloom{ animation-delay:.14s; }
+  .lp2 .petal-bloom{ animation-delay:.28s; }
+  .lp3 .petal-bloom{ animation-delay:.42s; }
+  .lp4 .petal-bloom{ animation-delay:.56s; }
+
+  @keyframes petalBloom{
+    0%{ transform:scale(.14); opacity:.5; }
+    60%{ opacity:1; }
+    100%{ transform:scale(1); opacity:1; }
+  }
+
+  .petal-fall{ transform-box:view-box; transform-origin:0 0; cursor:pointer; }
+  .petal-fall.fallen{
+    animation: petalFall .8s ease-in forwards;
+    pointer-events:none;
+  }
+  .petal-fall.regrowing{
+    animation: petalRegrow .7s cubic-bezier(.31,1.4,.5,1) forwards;
+  }
+  @keyframes petalFall{
+    0%{ transform:translate(0,0) rotate(0); opacity:1; }
+    100%{ transform:translate(14px,70px) rotate(75deg); opacity:0; }
+  }
+  @keyframes petalRegrow{
+    0%{ transform:translate(14px,70px) rotate(75deg); opacity:0; }
+    100%{ transform:translate(0,0) rotate(0); opacity:1; }
+  }
+
+  .petal-label{
+    font-family:'Cormorant Garamond', serif;
+    font-weight:600;
+    font-size:15px;
+    fill:var(--berenjena);
+    opacity:0;
+    text-anchor:middle;
+    pointer-events:none;
+  }
+  .petal-label.pop{ animation: labelPop 1.3s ease forwards; }
+  .petal-label.final{ font-size:20px; fill:#c0245a; }
+  @keyframes labelPop{
+    0%{ opacity:0; transform:translateY(6px); }
+    20%{ opacity:1; transform:translateY(-6px); }
+    80%{ opacity:1; transform:translateY(-14px); }
+    100%{ opacity:0; transform:translateY(-22px); }
+  }
+
+  .heart{
+    opacity:0;
+    transform-box:view-box;
+    transform-origin:center;
+  }
+  .heart.burst{ animation: heartBurst 1.4s ease forwards; }
+  @keyframes heartBurst{
+    0%{ opacity:0; transform:translateY(0) scale(.3); }
+    25%{ opacity:1; }
+    100%{ opacity:0; transform:translateY(-60px) scale(1.1); }
+  }
+
+  .lily-message{
+    font-family:'Cormorant Garamond', serif;
+    font-size:clamp(1.1rem, 4.4vw, 1.35rem);
+    line-height:1.55;
+    color:var(--berenjena);
+    max-width:28ch;
+    margin:22px 0 0;
+    opacity:0;
+    transform:translateY(8px);
+    transition: opacity .6s ease, transform .6s ease;
+  }
+  .lily-message.show{ opacity:1; transform:translateY(0); }
 
   footer.credit{
     margin-top:34px;
@@ -240,149 +528,248 @@
   @media (prefers-reduced-motion: reduce){
     .koala-breathe{ animation:none; }
     .koala-wrap.pop, .koala-wrap.poked{ animation:none; }
+    .draw-part{ opacity:1; transform:scale(1); }
+    .koala-scene.drawn .draw-part{ animation:none; }
+    .face-idle .eye{ animation:none; }
     .face-sad .tear,
     .face-sleepy .zzz,
     .face-angry .steam,
     .face-happy .sparkle,
     .face-sick .flush{ animation:none; opacity:1; }
+    .lily-scene .lily-plant{ animation:none; }
+    .petal-bloom{ transform:scale(1); opacity:1; }
+    .lily-scene.drawn .petal-bloom{ animation:none; }
+    .petal-fall.fallen, .petal-fall.regrowing{ transition:none; }
   }
 </style>
 </head>
 <body>
 
-  <div class="lang-switch" role="group" aria-label="Language">
-    <button type="button" data-lang="es">ES</button>
-    <button type="button" data-lang="en">EN</button>
-    <button type="button" data-lang="hu">HU</button>
+  <div class="loading-screen" id="loadingScreen">
+    <div class="spinner"></div>
+    <p data-i18n="loading"></p>
   </div>
 
-  <main class="stage">
-    <h1 class="heading" data-i18n="heading"></h1>
-    <p class="subtext" id="subtext" data-i18n="idle"></p>
+  <div class="lang-switch" role="group" aria-label="Language">
+    <button type="button" data-lang="es" title="Español">🇪🇸</button>
+    <button type="button" data-lang="en" title="English">🇬🇧</button>
+    <button type="button" data-lang="hu" title="Magyar">🇭🇺</button>
+  </div>
 
-    <div class="mood-options">
-      <button type="button" class="mood-btn" data-mood="sad">😢</button>
-      <button type="button" class="mood-btn" data-mood="happy">😊</button>
-      <button type="button" class="mood-btn" data-mood="angry">😠</button>
-      <button type="button" class="mood-btn" data-mood="sleepy">😴</button>
-      <button type="button" class="mood-btn" data-mood="sick">🤒</button>
-    </div>
+  <main class="stage" id="stage">
 
-    <div class="koala-breathe">
-      <div class="koala-wrap" id="koalaWrap">
-        <svg class="koala-svg" id="koalaSvg" viewBox="0 0 300 340" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <div class="intro-block" id="introBlock">
+      <h1 class="heading" data-i18n="heading"></h1>
+      <p class="subtext" id="subtext" data-i18n="idle"></p>
 
-          <!-- body -->
-          <ellipse cx="150" cy="290" rx="55" ry="40" fill="var(--koala-muzzle)" opacity=".9"/>
-          <ellipse cx="150" cy="296" rx="100" ry="62" fill="var(--koala-body)"/>
-
-          <!-- ears -->
-          <circle cx="76" cy="82" r="38" fill="var(--koala-body-dark)"/>
-          <circle cx="224" cy="82" r="38" fill="var(--koala-body-dark)"/>
-          <ellipse cx="80" cy="86" rx="16" ry="20" fill="var(--koala-inner-ear)"/>
-          <ellipse cx="220" cy="86" rx="16" ry="20" fill="var(--koala-inner-ear)"/>
-
-          <!-- head -->
-          <circle cx="150" cy="150" r="82" fill="var(--koala-body)"/>
-
-          <!-- blush -->
-          <ellipse cx="94" cy="182" rx="15" ry="9" fill="var(--koala-blush)" opacity=".5"/>
-          <ellipse cx="206" cy="182" rx="15" ry="9" fill="var(--koala-blush)" opacity=".5"/>
-
-          <!-- muzzle + nose -->
-          <ellipse cx="150" cy="178" rx="56" ry="44" fill="var(--koala-muzzle)"/>
-          <ellipse cx="150" cy="155" rx="26" ry="18" fill="var(--koala-nose)"/>
-          <ellipse cx="142" cy="149" rx="5" ry="3" fill="#fff" opacity=".45"/>
-
-          <!-- ============ FACES ============ -->
-
-          <!-- idle -->
-          <g class="koala-face face-idle">
-            <ellipse cx="120" cy="120" rx="7" ry="9" fill="#3d3638"/>
-            <ellipse cx="180" cy="120" rx="7" ry="9" fill="#3d3638"/>
-            <ellipse cx="122" cy="117" rx="2" ry="2.4" fill="#fff" opacity=".7"/>
-            <ellipse cx="182" cy="117" rx="2" ry="2.4" fill="#fff" opacity=".7"/>
-            <path d="M138,178 Q150,186 162,178" fill="none" stroke="#3d3638" stroke-width="3" stroke-linecap="round"/>
-          </g>
-
-          <!-- sad -->
-          <g class="koala-face face-sad">
-            <path d="M108,104 Q120,96 132,106" fill="none" stroke="#3d3638" stroke-width="3" stroke-linecap="round"/>
-            <path d="M168,106 Q180,96 192,104" fill="none" stroke="#3d3638" stroke-width="3" stroke-linecap="round"/>
-            <ellipse cx="120" cy="122" rx="6.5" ry="8" fill="#3d3638"/>
-            <ellipse cx="180" cy="122" rx="6.5" ry="8" fill="#3d3638"/>
-            <path d="M138,182 Q150,172 162,182" fill="none" stroke="#3d3638" stroke-width="3" stroke-linecap="round"/>
-            <path class="tear" d="M183,130 C188,138 188,146 183,150 C178,146 178,138 183,130 Z" fill="#7db8d9"/>
-          </g>
-
-          <!-- happy -->
-          <g class="koala-face face-happy">
-            <path d="M108,118 Q120,106 132,118" fill="none" stroke="#3d3638" stroke-width="3.5" stroke-linecap="round"/>
-            <path d="M168,118 Q180,106 192,118" fill="none" stroke="#3d3638" stroke-width="3.5" stroke-linecap="round"/>
-            <path d="M128,170 Q150,196 172,170" fill="none" stroke="#3d3638" stroke-width="3.5" stroke-linecap="round"/>
-            <g class="sparkle">
-              <path d="M76,150 l3,8 l8,3 l-8,3 l-3,8 l-3,-8 l-8,-3 l8,-3 Z" fill="var(--gold, #c9a24a)"/>
-            </g>
-            <g class="sparkle" style="animation-delay:.5s">
-              <path d="M232,140 l2.5,7 l7,2.5 l-7,2.5 l-2.5,7 l-2.5,-7 l-7,-2.5 l7,-2.5 Z" fill="var(--gold, #c9a24a)"/>
-            </g>
-          </g>
-
-          <!-- angry -->
-          <g class="koala-face face-angry">
-            <path d="M108,112 L133,102" fill="none" stroke="#3d3638" stroke-width="4" stroke-linecap="round"/>
-            <path d="M192,112 L167,102" fill="none" stroke="#3d3638" stroke-width="4" stroke-linecap="round"/>
-            <ellipse cx="120" cy="124" rx="6" ry="7" fill="#3d3638"/>
-            <ellipse cx="180" cy="124" rx="6" ry="7" fill="#3d3638"/>
-            <path d="M136,180 L164,180" fill="none" stroke="#3d3638" stroke-width="3.5" stroke-linecap="round"/>
-            <g class="steam">
-              <path d="M118,44 Q112,34 118,24" fill="none" stroke="#b96a6a" stroke-width="3" stroke-linecap="round"/>
-            </g>
-            <g class="steam" style="animation-delay:.25s">
-              <path d="M150,38 Q144,28 150,18" fill="none" stroke="#b96a6a" stroke-width="3" stroke-linecap="round"/>
-            </g>
-            <g class="steam" style="animation-delay:.5s">
-              <path d="M182,44 Q176,34 182,24" fill="none" stroke="#b96a6a" stroke-width="3" stroke-linecap="round"/>
-            </g>
-          </g>
-
-          <!-- sleepy -->
-          <g class="koala-face face-sleepy">
-            <path d="M110,120 Q120,128 130,120" fill="none" stroke="#3d3638" stroke-width="3.5" stroke-linecap="round"/>
-            <path d="M170,120 Q180,128 190,120" fill="none" stroke="#3d3638" stroke-width="3.5" stroke-linecap="round"/>
-            <ellipse cx="150" cy="182" rx="8" ry="6" fill="#3d3638" opacity=".85"/>
-            <text class="zzz" x="196" y="70" font-family="Jost, sans-serif" font-weight="600" font-size="20" fill="var(--berenjena, #6d2f52)">z</text>
-            <text class="zzz" x="212" y="54" font-family="Jost, sans-serif" font-weight="600" font-size="15" fill="var(--berenjena, #6d2f52)" style="animation-delay:.6s">z</text>
-            <text class="zzz" x="224" y="42" font-family="Jost, sans-serif" font-weight="600" font-size="11" fill="var(--berenjena, #6d2f52)" style="animation-delay:1.2s">z</text>
-          </g>
-
-          <!-- sick -->
-          <g class="koala-face face-sick">
-            <path d="M112,116 L128,124 M128,116 L112,124" stroke="#3d3638" stroke-width="3" stroke-linecap="round"/>
-            <path d="M172,116 L188,124 M188,116 L172,124" stroke="#3d3638" stroke-width="3" stroke-linecap="round"/>
-            <path d="M140,182 Q150,178 158,182" fill="none" stroke="#3d3638" stroke-width="3" stroke-linecap="round"/>
-            <ellipse class="flush" cx="94" cy="182" rx="15" ry="9" fill="#8ba86b" opacity=".5"/>
-            <ellipse class="flush" cx="206" cy="182" rx="15" ry="9" fill="#8ba86b" opacity=".5"/>
-            <g transform="translate(176,178) rotate(25)">
-              <rect x="-3" y="-26" width="6" height="26" rx="3" fill="#fff" stroke="#c9a3a3" stroke-width="1.5"/>
-              <circle cx="0" cy="0" r="6.5" fill="#d1595f"/>
-            </g>
-            <g transform="translate(96,66) rotate(-12)">
-              <rect x="-11" y="-5" width="22" height="10" rx="3" fill="#f6efe6" stroke="#d8cdbd" stroke-width="1"/>
-              <line x1="-4" y1="-5" x2="-4" y2="5" stroke="#d8cdbd" stroke-width="1"/>
-              <line x1="4" y1="-5" x2="4" y2="5" stroke="#d8cdbd" stroke-width="1"/>
-            </g>
-          </g>
-
-          <!-- eucalyptus leaves -->
-          <path d="M40,300 C28,286 30,266 46,254 C50,272 48,288 40,300 Z" fill="var(--sage)" opacity=".9"/>
-          <path d="M260,300 C272,286 270,266 254,254 C250,272 252,288 260,300 Z" fill="var(--sage)" opacity=".9"/>
-
-        </svg>
+      <div class="mood-options">
+        <button type="button" class="mood-btn" data-mood="sad">😢</button>
+        <button type="button" class="mood-btn" data-mood="happy">😊</button>
+        <button type="button" class="mood-btn" data-mood="angry">😠</button>
+        <button type="button" class="mood-btn" data-mood="sleepy">😴</button>
+        <button type="button" class="mood-btn" data-mood="sick">🤒</button>
       </div>
     </div>
 
-    <p class="response" id="responseText"></p>
+    <div class="koala-scene" id="koalaScene">
+      <div class="koala-breathe">
+        <div class="koala-wrap" id="koalaWrap">
+          <svg class="koala-svg" id="koalaSvg" viewBox="0 0 300 340" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+
+            <ellipse class="draw-part part-6" cx="150" cy="290" rx="55" ry="40" fill="var(--koala-muzzle)" opacity=".9"/>
+            <ellipse class="draw-part part-6" cx="150" cy="296" rx="100" ry="62" fill="var(--koala-body)"/>
+
+            <g class="draw-part part-1">
+              <circle cx="76" cy="82" r="38" fill="var(--koala-body-dark)"/>
+              <circle cx="224" cy="82" r="38" fill="var(--koala-body-dark)"/>
+              <ellipse cx="80" cy="86" rx="16" ry="20" fill="var(--koala-inner-ear)"/>
+              <ellipse cx="220" cy="86" rx="16" ry="20" fill="var(--koala-inner-ear)"/>
+            </g>
+
+            <circle class="draw-part part-2" cx="150" cy="150" r="82" fill="var(--koala-body)"/>
+
+            <g class="draw-part part-5">
+              <ellipse cx="94" cy="182" rx="15" ry="9" fill="var(--koala-blush)" opacity=".5"/>
+              <ellipse cx="206" cy="182" rx="15" ry="9" fill="var(--koala-blush)" opacity=".5"/>
+            </g>
+
+            <g class="draw-part part-3">
+              <ellipse cx="150" cy="178" rx="56" ry="44" fill="var(--koala-muzzle)"/>
+              <ellipse cx="150" cy="155" rx="26" ry="18" fill="var(--koala-nose)"/>
+              <ellipse cx="142" cy="149" rx="5" ry="3" fill="#fff" opacity=".45"/>
+            </g>
+
+            <!-- ============ FACES (cross-fade) ============ -->
+
+            <g class="koala-face face-idle" data-mood="idle">
+              <ellipse class="eye" cx="120" cy="120" rx="7" ry="9" fill="#3d3638"/>
+              <ellipse class="eye" cx="180" cy="120" rx="7" ry="9" fill="#3d3638"/>
+              <ellipse cx="122" cy="117" rx="2" ry="2.4" fill="#fff" opacity=".7"/>
+              <ellipse cx="182" cy="117" rx="2" ry="2.4" fill="#fff" opacity=".7"/>
+              <path d="M138,178 Q150,186 162,178" fill="none" stroke="#3d3638" stroke-width="3" stroke-linecap="round"/>
+            </g>
+
+            <g class="koala-face face-sad" data-mood="sad">
+              <path d="M108,104 Q120,96 132,106" fill="none" stroke="#3d3638" stroke-width="3" stroke-linecap="round"/>
+              <path d="M168,106 Q180,96 192,104" fill="none" stroke="#3d3638" stroke-width="3" stroke-linecap="round"/>
+              <ellipse cx="120" cy="122" rx="6.5" ry="8" fill="#3d3638"/>
+              <ellipse cx="180" cy="122" rx="6.5" ry="8" fill="#3d3638"/>
+              <path d="M138,182 Q150,172 162,182" fill="none" stroke="#3d3638" stroke-width="3" stroke-linecap="round"/>
+              <path class="tear" d="M183,130 C188,138 188,146 183,150 C178,146 178,138 183,130 Z" fill="#7db8d9"/>
+            </g>
+
+            <g class="koala-face face-happy" data-mood="happy">
+              <path d="M108,118 Q120,106 132,118" fill="none" stroke="#3d3638" stroke-width="3.5" stroke-linecap="round"/>
+              <path d="M168,118 Q180,106 192,118" fill="none" stroke="#3d3638" stroke-width="3.5" stroke-linecap="round"/>
+              <path d="M128,170 Q150,196 172,170" fill="none" stroke="#3d3638" stroke-width="3.5" stroke-linecap="round"/>
+              <g class="sparkle"><path d="M76,150 l3,8 l8,3 l-8,3 l-3,8 l-3,-8 l-8,-3 l8,-3 Z" fill="var(--gold)"/></g>
+              <g class="sparkle" style="animation-delay:.5s"><path d="M232,140 l2.5,7 l7,2.5 l-7,2.5 l-2.5,7 l-2.5,-7 l-7,-2.5 l7,-2.5 Z" fill="var(--gold)"/></g>
+            </g>
+
+            <g class="koala-face face-angry" data-mood="angry">
+              <path d="M108,112 L133,102" fill="none" stroke="#3d3638" stroke-width="4" stroke-linecap="round"/>
+              <path d="M192,112 L167,102" fill="none" stroke="#3d3638" stroke-width="4" stroke-linecap="round"/>
+              <ellipse cx="120" cy="124" rx="6" ry="7" fill="#3d3638"/>
+              <ellipse cx="180" cy="124" rx="6" ry="7" fill="#3d3638"/>
+              <path d="M136,180 L164,180" fill="none" stroke="#3d3638" stroke-width="3.5" stroke-linecap="round"/>
+              <g class="steam"><path d="M118,44 Q112,34 118,24" fill="none" stroke="#b96a6a" stroke-width="3" stroke-linecap="round"/></g>
+              <g class="steam" style="animation-delay:.25s"><path d="M150,38 Q144,28 150,18" fill="none" stroke="#b96a6a" stroke-width="3" stroke-linecap="round"/></g>
+              <g class="steam" style="animation-delay:.5s"><path d="M182,44 Q176,34 182,24" fill="none" stroke="#b96a6a" stroke-width="3" stroke-linecap="round"/></g>
+            </g>
+
+            <g class="koala-face face-sleepy" data-mood="sleepy">
+              <path d="M110,120 Q120,128 130,120" fill="none" stroke="#3d3638" stroke-width="3.5" stroke-linecap="round"/>
+              <path d="M170,120 Q180,128 190,120" fill="none" stroke="#3d3638" stroke-width="3.5" stroke-linecap="round"/>
+              <ellipse cx="150" cy="182" rx="8" ry="6" fill="#3d3638" opacity=".85"/>
+              <text class="zzz" x="196" y="70" font-family="Jost, sans-serif" font-weight="600" font-size="20" fill="var(--berenjena)">z</text>
+              <text class="zzz" x="212" y="54" font-family="Jost, sans-serif" font-weight="600" font-size="15" fill="var(--berenjena)" style="animation-delay:.6s">z</text>
+              <text class="zzz" x="224" y="42" font-family="Jost, sans-serif" font-weight="600" font-size="11" fill="var(--berenjena)" style="animation-delay:1.2s">z</text>
+            </g>
+
+            <g class="koala-face face-sick" data-mood="sick">
+              <path d="M112,116 L128,124 M128,116 L112,124" stroke="#3d3638" stroke-width="3" stroke-linecap="round"/>
+              <path d="M172,116 L188,124 M188,116 L172,124" stroke="#3d3638" stroke-width="3" stroke-linecap="round"/>
+              <path d="M140,182 Q150,178 158,182" fill="none" stroke="#3d3638" stroke-width="3" stroke-linecap="round"/>
+              <ellipse class="flush" cx="94" cy="182" rx="15" ry="9" fill="#8ba86b" opacity=".5"/>
+              <ellipse class="flush" cx="206" cy="182" rx="15" ry="9" fill="#8ba86b" opacity=".5"/>
+              <g transform="translate(176,178) rotate(25)">
+                <rect x="-3" y="-26" width="6" height="26" rx="3" fill="#fff" stroke="#c9a3a3" stroke-width="1.5"/>
+                <circle cx="0" cy="0" r="6.5" fill="#d1595f"/>
+              </g>
+              <g transform="translate(96,66) rotate(-12)">
+                <rect x="-11" y="-5" width="22" height="10" rx="3" fill="#f6efe6" stroke="#d8cdbd" stroke-width="1"/>
+                <line x1="-4" y1="-5" x2="-4" y2="5" stroke="#d8cdbd" stroke-width="1"/>
+                <line x1="4" y1="-5" x2="4" y2="5" stroke="#d8cdbd" stroke-width="1"/>
+              </g>
+            </g>
+
+            <g class="draw-part part-4">
+              <path d="M40,300 C28,286 30,266 46,254 C50,272 48,288 40,300 Z" fill="var(--sage)" opacity=".9"/>
+              <path d="M260,300 C272,286 270,266 254,254 C250,272 252,288 260,300 Z" fill="var(--sage)" opacity=".9"/>
+            </g>
+
+          </svg>
+        </div>
+      </div>
+
+      <p class="response" id="responseText"></p>
+
+      <div class="angry-box" id="angryBox">
+        <p class="angry-question" data-i18n="angryQuestion"></p>
+        <div class="angry-buttons">
+          <button type="button" id="angryYes" data-i18n="yes"></button>
+          <button type="button" id="angryNo" data-i18n="no"></button>
+        </div>
+        <p class="angry-calm" id="angryCalm" data-i18n="angryCalm"></p>
+      </div>
+    </div>
+
+    <div class="lily-scene" id="lilyScene">
+      <div class="lily-wrap">
+        <svg class="lily-svg" id="lilySvg" viewBox="0 0 300 400" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <defs>
+            <linearGradient id="petalGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%"  stop-color="var(--petal-outer)"/>
+              <stop offset="45%" stop-color="var(--petal-inner)"/>
+              <stop offset="100%" stop-color="#fdf3ec"/>
+            </linearGradient>
+            <linearGradient id="stemGrad" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%"  stop-color="var(--sage-dark)"/>
+              <stop offset="100%" stop-color="var(--sage)"/>
+            </linearGradient>
+          </defs>
+
+          <g class="lily-plant">
+            <path d="M150,392 C148,320 152,230 150,152" fill="none" stroke="url(#stemGrad)" stroke-width="6" stroke-linecap="round"/>
+            <path d="M150,300 C118,292 92,304 74,332 C104,332 132,322 150,300 Z" fill="var(--sage)"/>
+            <path d="M150,255 C184,244 210,254 228,280 C198,284 170,276 150,255 Z" fill="var(--sage-dark)"/>
+
+            <g class="flower">
+              <g class="petal-rotate lp0" data-petal="0" transform="translate(150 150) rotate(0)">
+                <g class="petal-bloom">
+                  <g class="petal-fall">
+                    <path d="M0,0 C-18,-20 -30,-46 -27,-78 C-24,-104 -12,-122 0,-130 C12,-122 24,-104 27,-78 C30,-46 18,-20 0,0 Z" fill="url(#petalGrad)"/>
+                  </g>
+                </g>
+              </g>
+              <g class="petal-rotate lp1" data-petal="1" transform="translate(150 150) rotate(72)">
+                <g class="petal-bloom">
+                  <g class="petal-fall">
+                    <path d="M0,0 C-18,-20 -30,-46 -27,-78 C-24,-104 -12,-122 0,-130 C12,-122 24,-104 27,-78 C30,-46 18,-20 0,0 Z" fill="url(#petalGrad)"/>
+                  </g>
+                </g>
+              </g>
+              <g class="petal-rotate lp2" data-petal="2" transform="translate(150 150) rotate(144)">
+                <g class="petal-bloom">
+                  <g class="petal-fall">
+                    <path d="M0,0 C-18,-20 -30,-46 -27,-78 C-24,-104 -12,-122 0,-130 C12,-122 24,-104 27,-78 C30,-46 18,-20 0,0 Z" fill="url(#petalGrad)"/>
+                  </g>
+                </g>
+              </g>
+              <g class="petal-rotate lp3" data-petal="3" transform="translate(150 150) rotate(216)">
+                <g class="petal-bloom">
+                  <g class="petal-fall">
+                    <path d="M0,0 C-18,-20 -30,-46 -27,-78 C-24,-104 -12,-122 0,-130 C12,-122 24,-104 27,-78 C30,-46 18,-20 0,0 Z" fill="url(#petalGrad)"/>
+                  </g>
+                </g>
+              </g>
+              <g class="petal-rotate lp4" data-petal="4" transform="translate(150 150) rotate(288)">
+                <g class="petal-bloom">
+                  <g class="petal-fall">
+                    <path d="M0,0 C-18,-20 -30,-46 -27,-78 C-24,-104 -12,-122 0,-130 C12,-122 24,-104 27,-78 C30,-46 18,-20 0,0 Z" fill="url(#petalGrad)"/>
+                  </g>
+                </g>
+              </g>
+
+              <g class="stamens">
+                <path d="M150,150 C142,130 132,112 120,100" fill="none" stroke="var(--gold)" stroke-width="2"/>
+                <ellipse cx="118" cy="97" rx="5" ry="3" fill="var(--gold)" transform="rotate(-35 118 97)"/>
+                <path d="M150,150 C152,126 152,104 150,84" fill="none" stroke="var(--gold)" stroke-width="2"/>
+                <ellipse cx="150" cy="80" rx="5" ry="3" fill="var(--gold)"/>
+                <path d="M150,150 C158,130 168,112 180,100" fill="none" stroke="var(--gold)" stroke-width="2"/>
+                <ellipse cx="182" cy="97" rx="5" ry="3" fill="var(--gold)" transform="rotate(35 182 97)"/>
+                <circle cx="150" cy="150" r="6" fill="var(--berenjena)"/>
+              </g>
+            </g>
+
+            <!-- floating "loves me / loves me not" labels, one per petal position -->
+            <text class="petal-label" id="petalLabel0" x="150" y="55"></text>
+            <text class="petal-label" id="petalLabel1" x="240" y="121"></text>
+            <text class="petal-label" id="petalLabel2" x="206" y="227"></text>
+            <text class="petal-label" id="petalLabel3" x="94" y="227"></text>
+            <text class="petal-label" id="petalLabel4" x="60" y="121"></text>
+
+            <!-- celebration hearts -->
+            <text class="heart" id="heart0" x="150" y="150" font-size="22" text-anchor="middle">❤</text>
+            <text class="heart" id="heart1" x="120" y="160" font-size="16" text-anchor="middle">❤</text>
+            <text class="heart" id="heart2" x="180" y="160" font-size="16" text-anchor="middle">❤</text>
+          </g>
+        </svg>
+      </div>
+
+      <p class="lily-message" id="lilyMessage" data-i18n="lilyMessage"></p>
+    </div>
+
   </main>
 
   <footer class="credit" data-i18n="credit"></footer>
@@ -390,7 +777,7 @@
 <script>
 (function(){
   // bump this together with version.json on every content update
-  var CURRENT_VERSION = 3;
+  var CURRENT_VERSION = 4;
 
   fetch('version.json?_=' + Date.now(), { cache: 'no-store' })
     .then(function(res){ return res.ok ? res.json() : null; })
@@ -408,11 +795,12 @@
 
   var translations = {
     es: {
+      loading: "Cargando con amor y cariño...",
       heading: "¿Cómo se siente Koala hoy?",
       idle: "Toca un emoji y cuéntame",
       credit: "hecho con cariño",
       happy: "Ya te lo dije, no dejes que nadie te quite esa sonrisa 😄",
-      angry: "Uy, esa carita me asusta un poquito 😅 Ven, te debo un abrazo (y prometo portarme mejor)",
+      angry: "Uy, esa carita me asusta un poquito 😅",
       sleepy: "Yo soy Dormir... Buenas noches... Duerme con los angelitos ❤️",
       sick: "Descansa mucho, bebe agüita y deja que te cuide un poquito. Te vas a poner mejor 🌸",
       sadPool: [
@@ -421,14 +809,23 @@
         "Eres mucho más fuerte de lo que crees, confía en ti.",
         "Un mal momento no borra todas las cosas buenas que tienes.",
         "Te mando un abrazo enorme desde aquí, no estás sola."
-      ]
+      ],
+      angryQuestion: "¿Estás molesta con tu zebra?",
+      yes: "Sí",
+      no: "No",
+      angryCalm: "Uff, qué alivio 💛 Prometo seguir portándome bien contigo",
+      lilyMessage: "Perdón, toma este Lili para que aunque estés molesta conmigo siempre recuerdes lo mucho que te quiero... Perdón...",
+      lovesMe: "Me ama",
+      lovesMeNot: "No me ama",
+      lovesMeFinal: "¡Me ama! 💕"
     },
     en: {
+      loading: "Loading with love and care...",
       heading: "How is Koala feeling today?",
       idle: "Tap an emoji and tell me",
       credit: "made with love",
       happy: "I told you so, don't let anyone take that smile away 😄",
-      angry: "Uh oh, that face scares me a little 😅 Come here, I owe you a hug (and I promise to behave better)",
+      angry: "Uh oh, that face scares me a little 😅",
       sleepy: "I am Sleep... Good night... Sleep with the little angels ❤️",
       sick: "Rest a lot, drink plenty of water, and let me take care of you a little. You'll feel better soon 🌸",
       sadPool: [
@@ -437,14 +834,23 @@
         "You're so much stronger than you think, trust yourself.",
         "One bad moment doesn't erase all the good things you have.",
         "Sending you a huge hug from here, you're not alone."
-      ]
+      ],
+      angryQuestion: "Are you upset with your zebra?",
+      yes: "Yes",
+      no: "No",
+      angryCalm: "Phew, what a relief 💛 I promise to keep treating you well",
+      lilyMessage: "Sorry, take this Lily so that even when you're upset with me, you'll always remember how much I love you... Sorry...",
+      lovesMe: "Loves me",
+      lovesMeNot: "Loves me not",
+      lovesMeFinal: "Loves me! 💕"
     },
     hu: {
+      loading: "Töltés szeretettel és gondoskodással...",
       heading: "Hogy érzi magát ma Koala?",
       idle: "Koppints egy emojira és mondd el",
       credit: "szeretettel készült",
       happy: "Megmondtam, ne hagyd, hogy bárki elvegye azt a mosolyt 😄",
-      angry: "Hoppá, az az arc egy kicsit megijeszt 😅 Gyere, tartozom egy öleléssel (és ígérem, jobban fogok viselkedni)",
+      angry: "Hoppá, az az arc egy kicsit megijeszt 😅",
       sleepy: "Én vagyok az Álom... Jó éjt... Aludj az angyalkákkal ❤️",
       sick: "Pihenj sokat, igyál sok vizet, és hagyd, hogy egy kicsit vigyázzak rád. Hamarosan jobban leszel 🌸",
       sadPool: [
@@ -453,7 +859,15 @@
         "Sokkal erősebb vagy, mint hiszed, bízz magadban.",
         "Egy rossz pillanat nem törli el a sok jó dolgot, amid van.",
         "Küldök egy hatalmas ölelést innen, nem vagy egyedül."
-      ]
+      ],
+      angryQuestion: "Mérges vagy a zebrádra?",
+      yes: "Igen",
+      no: "Nem",
+      angryCalm: "Ez megnyugtató 💛 Ígérem, továbbra is jól bánok majd veled",
+      lilyMessage: "Bocsánat, fogadd el ezt a Lilit, hogy még ha mérges is vagy rám, mindig emlékezz rá, mennyire szeretlek... Bocsánat...",
+      lovesMe: "Szeret",
+      lovesMeNot: "Nem szeret",
+      lovesMeFinal: "Szeret! 💕"
     }
   };
 
@@ -462,12 +876,22 @@
   var currentLang = DEFAULT_LANG;
   var currentMood = null;
   var currentSadIndex = -1;
+  var koalaDrawn = false;
 
   var subtext = document.getElementById("subtext");
+  var stage = document.getElementById("stage");
+  var koalaScene = document.getElementById("koalaScene");
   var responseText = document.getElementById("responseText");
   var koalaSvg = document.getElementById("koalaSvg");
   var koalaWrap = document.getElementById("koalaWrap");
   var moodBtns = document.querySelectorAll(".mood-btn");
+  var angryBox = document.getElementById("angryBox");
+  var angryYes = document.getElementById("angryYes");
+  var angryNo = document.getElementById("angryNo");
+  var angryCalm = document.getElementById("angryCalm");
+  var lilyScene = document.getElementById("lilyScene");
+  var lilySvg = document.getElementById("lilySvg");
+  var lilyMessage = document.getElementById("lilyMessage");
   var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   function detectLang(){
@@ -487,10 +911,7 @@
   }
 
   function renderResponse(){
-    if(!currentMood){
-      responseText.textContent = "";
-      return;
-    }
+    if(!currentMood) return;
     var dict = translations[currentLang];
     responseText.textContent = currentMood === "sad"
       ? dict.sadPool[currentSadIndex >= 0 ? currentSadIndex : 0]
@@ -512,10 +933,8 @@
     });
 
     document.documentElement.setAttribute("lang", lang);
-
     try{ localStorage.setItem(STORAGE_KEY, lang); }catch(e){}
 
-    if(currentMood){ subtext.textContent = ""; }
     renderResponse();
   }
 
@@ -524,8 +943,17 @@
   });
 
   setLang(detectLang());
+  koalaSvg.querySelector('[data-mood="idle"]').classList.add("active");
 
+  // ---------- loading screen ----------
+  var loadingScreen = document.getElementById("loadingScreen");
+  window.setTimeout(function(){
+    loadingScreen.classList.add("hide");
+  }, reduceMotion ? 300 : 1400);
+
+  // ---------- koala moods ----------
   function triggerPop(){
+    if(reduceMotion) return;
     koalaWrap.classList.remove("pop");
     void koalaWrap.offsetWidth;
     koalaWrap.classList.add("pop");
@@ -535,18 +963,34 @@
     btn.addEventListener("click", function(){
       var mood = btn.dataset.mood;
 
+      if(!koalaDrawn){
+        koalaDrawn = true;
+        stage.classList.add("compact");
+        subtext.classList.add("gone");
+        koalaScene.classList.add("revealed");
+        koalaScene.classList.add("drawn");
+      }
+
       if(mood === "sad"){ pickNewSadIndex(); }
 
       currentMood = mood;
-      subtext.textContent = "";
-
       moodBtns.forEach(function(b){ b.classList.toggle("selected", b === btn); });
 
-      koalaSvg.classList.remove("mood-idle","mood-sad","mood-happy","mood-angry","mood-sleepy","mood-sick");
-      koalaSvg.classList.add("mood-" + mood);
+      document.querySelectorAll(".koala-face").forEach(function(g){
+        g.classList.toggle("active", g.dataset.mood === mood);
+      });
 
       renderResponse();
-      if(!reduceMotion) triggerPop();
+      responseText.classList.add("show");
+      triggerPop();
+
+      if(mood === "angry"){
+        angryCalm.classList.remove("show");
+        angryCalm.textContent = "";
+        angryBox.classList.add("show");
+      }else{
+        angryBox.classList.remove("show");
+      }
     });
   });
 
@@ -557,7 +1001,93 @@
     koalaWrap.classList.add("poked");
   });
 
-  koalaSvg.classList.add("mood-idle");
+  angryNo.addEventListener("click", function(){
+    angryCalm.textContent = translations[currentLang].angryCalm;
+    angryCalm.classList.add("show");
+  });
+
+  angryYes.addEventListener("click", function(){
+    document.getElementById("introBlock").style.display = "none";
+    koalaScene.classList.add("leaving");
+    window.setTimeout(function(){
+      koalaScene.style.display = "none";
+      showLily();
+    }, reduceMotion ? 0 : 700);
+  });
+
+  // ---------- lily scene ----------
+  var petalLovesMe = [true, false, true, false, true];
+  var pickCount = 0;
+  var fallenCount = 0;
+  var regrowTimer = null;
+
+  function showLily(){
+    lilyScene.classList.add("show");
+    window.requestAnimationFrame(function(){
+      lilyScene.classList.add("drawn");
+    });
+
+    var bloomTime = reduceMotion ? 0 : 1200;
+    window.setTimeout(function(){
+      lilyScene.classList.add("swaying");
+      lilyMessage.classList.add("show");
+    }, bloomTime + 200);
+
+    lilySvg.querySelectorAll(".petal-fall").forEach(function(p){
+      p.addEventListener("click", onPetalTap);
+    });
+  }
+
+  function onPetalTap(){
+    var petalGroup = this;
+    var idx = parseInt(petalGroup.closest("[data-petal]").dataset.petal, 10);
+
+    if(petalGroup.classList.contains("fallen")) return;
+
+    pickCount++;
+    fallenCount++;
+    var isLast = fallenCount === petalLovesMe.length;
+    var loves = pickCount % 2 === 1;
+
+    var label = document.getElementById("petalLabel" + idx);
+    var dict = translations[currentLang];
+    label.textContent = isLast ? dict.lovesMeFinal : (loves ? dict.lovesMe : dict.lovesMeNot);
+    label.classList.toggle("final", isLast);
+    label.classList.remove("pop");
+    void label.offsetWidth;
+    label.classList.add("pop");
+
+    petalGroup.classList.add("fallen");
+
+    if(isLast){
+      window.setTimeout(function(){
+        ["heart0","heart1","heart2"].forEach(function(id, i){
+          var h = document.getElementById(id);
+          h.classList.remove("burst");
+          void h.offsetWidth;
+          window.setTimeout(function(){ h.classList.add("burst"); }, i * 120);
+        });
+      }, 150);
+
+      regrowTimer = window.setTimeout(regrowPetals, 3600);
+    }
+  }
+
+  function regrowPetals(){
+    lilySvg.querySelectorAll(".petal-fall").forEach(function(p, i){
+      window.setTimeout(function(){
+        p.classList.remove("fallen");
+        p.classList.remove("regrowing");
+        void p.offsetWidth;
+        p.classList.add("regrowing");
+      }, i * 90);
+    });
+    lilySvg.querySelectorAll(".petal-label").forEach(function(l){
+      l.classList.remove("pop", "final");
+    });
+    pickCount = 0;
+    fallenCount = 0;
+  }
 
 })();
 </script>
