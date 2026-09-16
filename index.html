@@ -44,6 +44,10 @@
     display:flex;
     flex-direction:column;
     align-items:center;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-user-select:none;
+    user-select:none;
+    -webkit-touch-callout:none;
   }
 
   .stage{
@@ -326,6 +330,13 @@
   }
   .face-sick .flush{ animation: flushPulse 1.7s ease-in-out infinite; }
 
+  @keyframes floatHeart{
+    0%{ transform:translateY(0) scale(.7); opacity:0; }
+    20%{ opacity:1; }
+    100%{ transform:translateY(-22px) scale(1); opacity:0; }
+  }
+  .face-loved .floaty-heart{ animation: floatHeart 2.2s ease-in-out infinite; }
+
   /* ---------- response ---------- */
   .response{
     font-family:'Cormorant Garamond', serif;
@@ -535,7 +546,8 @@
     .face-sleepy .zzz,
     .face-angry .steam,
     .face-happy .sparkle,
-    .face-sick .flush{ animation:none; opacity:1; }
+    .face-sick .flush,
+    .face-loved .floaty-heart{ animation:none; opacity:1; }
     .lily-scene .lily-plant{ animation:none; }
     .petal-bloom{ transform:scale(1); opacity:1; }
     .lily-scene.drawn .petal-bloom{ animation:none; }
@@ -568,6 +580,7 @@
         <button type="button" class="mood-btn" data-mood="angry">😠</button>
         <button type="button" class="mood-btn" data-mood="sleepy">😴</button>
         <button type="button" class="mood-btn" data-mood="sick">🤒</button>
+        <button type="button" class="mood-btn" data-mood="loved">😍</button>
       </div>
     </div>
 
@@ -660,6 +673,25 @@
                 <rect x="-11" y="-5" width="22" height="10" rx="3" fill="#f6efe6" stroke="#d8cdbd" stroke-width="1"/>
                 <line x1="-4" y1="-5" x2="-4" y2="5" stroke="#d8cdbd" stroke-width="1"/>
                 <line x1="4" y1="-5" x2="4" y2="5" stroke="#d8cdbd" stroke-width="1"/>
+              </g>
+            </g>
+
+            <g class="koala-face face-loved" data-mood="loved">
+              <g transform="translate(120,119) scale(1.05)">
+                <path d="M0,-2 C-2,-6 -8,-5 -8,0 C-8,4 -3,7 0,10 C3,7 8,4 8,0 C8,-5 2,-6 0,-2 Z" fill="#d94f72"/>
+              </g>
+              <g transform="translate(180,119) scale(1.05)">
+                <path d="M0,-2 C-2,-6 -8,-5 -8,0 C-8,4 -3,7 0,10 C3,7 8,4 8,0 C8,-5 2,-6 0,-2 Z" fill="#d94f72"/>
+              </g>
+              <path d="M128,170 Q150,194 172,170" fill="none" stroke="#3d3638" stroke-width="3.5" stroke-linecap="round"/>
+              <g class="floaty-heart" style="animation-delay:0s">
+                <path d="M74,138 C72,134 66,135 66,140 C66,144 71,147 74,151 C77,147 82,144 82,140 C82,135 76,134 74,138 Z" fill="#d94f72"/>
+              </g>
+              <g class="floaty-heart" style="animation-delay:.6s">
+                <path d="M226,128 C224,124 219,125 219,130 C219,134 223,137 226,141 C229,137 233,134 233,130 C233,125 228,124 226,128 Z" fill="#d94f72"/>
+              </g>
+              <g class="floaty-heart" style="animation-delay:1.2s">
+                <path d="M150,52 C148,48 143,49 143,54 C143,58 147,61 150,65 C153,61 157,58 157,54 C157,49 152,48 150,52 Z" fill="#d94f72"/>
               </g>
             </g>
 
@@ -777,7 +809,7 @@
 <script>
 (function(){
   // bump this together with version.json on every content update
-  var CURRENT_VERSION = 4;
+  var CURRENT_VERSION = 5;
 
   fetch('version.json?_=' + Date.now(), { cache: 'no-store' })
     .then(function(res){ return res.ok ? res.json() : null; })
@@ -803,6 +835,7 @@
       angry: "Uy, esa carita me asusta un poquito 😅",
       sleepy: "Yo soy Dormir... Buenas noches... Duerme con los angelitos ❤️",
       sick: "Descansa mucho, bebe agüita y deja que te cuide un poquito. Te vas a poner mejor 🌸",
+      loved: "Más vale que sea por mí, porque si no me pongo bien celoso 😏",
       sadPool: [
         "Respira hondo, esto también va a pasar 🤍",
         "Está bien no estar bien, yo sigo aquí contigo.",
@@ -828,6 +861,7 @@
       angry: "Uh oh, that face scares me a little 😅",
       sleepy: "I am Sleep... Good night... Sleep with the little angels ❤️",
       sick: "Rest a lot, drink plenty of water, and let me take care of you a little. You'll feel better soon 🌸",
+      loved: "It better be because of me, or I'm going to get really jealous 😏",
       sadPool: [
         "Take a deep breath, this will pass too 🤍",
         "It's okay not to be okay, I'm still right here with you.",
@@ -853,6 +887,7 @@
       angry: "Hoppá, az az arc egy kicsit megijeszt 😅",
       sleepy: "Én vagyok az Álom... Jó éjt... Aludj az angyalkákkal ❤️",
       sick: "Pihenj sokat, igyál sok vizet, és hagyd, hogy egy kicsit vigyázzak rád. Hamarosan jobban leszel 🌸",
+      loved: "Jobb, ha miattam van, mert különben nagyon féltékeny leszek 😏",
       sadPool: [
         "Vegyél egy mély levegőt, ez is elmúlik majd 🤍",
         "Nem baj, ha nem vagy jól, itt vagyok veled.",
@@ -949,7 +984,7 @@
   var loadingScreen = document.getElementById("loadingScreen");
   window.setTimeout(function(){
     loadingScreen.classList.add("hide");
-  }, reduceMotion ? 300 : 1400);
+  }, reduceMotion ? 300 : 3400);
 
   // ---------- koala moods ----------
   function triggerPop(){
@@ -1057,6 +1092,8 @@
     void label.offsetWidth;
     label.classList.add("pop");
 
+    petalGroup.classList.remove("regrowing");
+    void petalGroup.offsetWidth;
     petalGroup.classList.add("fallen");
 
     if(isLast){
