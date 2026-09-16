@@ -567,12 +567,14 @@
 
   /* ---------- forgive box ---------- */
   .forgive-box{
-    margin-top:30px;
+    /* no transform here on purpose: a transform on an ancestor would make
+       #forgiveNo's position:fixed (while dodging) position relative to
+       this box instead of the viewport */
+    margin-top:38px;
     opacity:0;
-    transform:translateY(8px);
-    transition: opacity .6s ease, transform .6s ease;
+    transition: opacity .6s ease, margin-top .6s ease;
   }
-  .forgive-box.show{ opacity:1; transform:translateY(0); }
+  .forgive-box.show{ opacity:1; margin-top:30px; }
 
   .forgive-question{
     font-family:'Cormorant Garamond', serif;
@@ -1010,7 +1012,7 @@
 <script>
 (function(){
   // bump this together with version.json on every content update
-  var CURRENT_VERSION = 8;
+  var CURRENT_VERSION = 9;
 
   fetch('version.json?_=' + Date.now(), { cache: 'no-store' })
     .then(function(res){ return res.ok ? res.json() : null; })
@@ -1352,27 +1354,46 @@
     }
   }
 
-  function dodgeForgiveNo(e){
-    if(e && e.cancelable) e.preventDefault();
-
-    if(!forgiveNo.classList.contains("dodging")){
-      var rect = forgiveNo.getBoundingClientRect();
-      forgiveNo.classList.add("dodging");
-      forgiveNo.style.left = rect.left + "px";
-      forgiveNo.style.top = rect.top + "px";
-      void forgiveNo.offsetWidth;
+  function visibleViewport(){
+    if(window.visualViewport){
+      return { w: window.visualViewport.width, h: window.visualViewport.height };
     }
+    return { w: window.innerWidth, h: window.innerHeight };
+  }
 
-    var pad = 16;
+  function moveForgiveNo(){
+    var pad = 20;
+    var vp = visibleViewport();
     var w = forgiveNo.offsetWidth;
     var h = forgiveNo.offsetHeight;
-    var maxX = Math.max(pad, window.innerWidth - w - pad);
-    var maxY = Math.max(pad, window.innerHeight - h - pad);
+    var maxX = Math.max(pad, vp.w - w - pad);
+    var maxY = Math.max(pad, vp.h - h - pad);
     var x = pad + Math.random() * (maxX - pad);
     var y = pad + Math.random() * (maxY - pad);
 
     forgiveNo.style.left = x + "px";
     forgiveNo.style.top = y + "px";
+  }
+
+  function dodgeForgiveNo(e){
+    if(e && e.cancelable) e.preventDefault();
+
+    if(!forgiveNo.classList.contains("dodging")){
+      var rect = forgiveNo.getBoundingClientRect();
+      forgiveNo.style.left = rect.left + "px";
+      forgiveNo.style.top = rect.top + "px";
+      forgiveNo.classList.add("dodging");
+
+      // give the browser a real painted frame at the frozen spot first,
+      // otherwise the very first move can skip straight to the end
+      // position instead of visibly gliding there
+      window.requestAnimationFrame(function(){
+        window.requestAnimationFrame(moveForgiveNo);
+      });
+      return;
+    }
+
+    moveForgiveNo();
   }
 
   forgiveNo.addEventListener("pointerenter", dodgeForgiveNo);
