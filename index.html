@@ -434,6 +434,21 @@
 
 <script>
 (function(){
+  // bump this together with version.json on every content update
+  var CURRENT_VERSION = 1;
+
+  fetch('version.json?_=' + Date.now(), { cache: 'no-store' })
+    .then(function(res){ return res.ok ? res.json() : null; })
+    .then(function(data){
+      if(data && data.v && data.v !== CURRENT_VERSION){
+        location.replace(location.pathname + '?_v=' + Date.now());
+      }
+    })
+    .catch(function(){});
+})();
+</script>
+<script>
+(function(){
   "use strict";
 
   var translations = {
