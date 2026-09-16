@@ -372,6 +372,27 @@
   }
   .response.show{ opacity:1; transform:translateY(0); }
 
+  .wa-btn{
+    display:none;
+    margin-top:16px;
+    font-family:'Jost', sans-serif;
+    font-size:.9rem;
+    font-weight:500;
+    color:#fff;
+    text-decoration:none;
+    background:#25D366;
+    padding:11px 22px;
+    border-radius:999px;
+    box-shadow:0 8px 20px rgba(37,211,102,.28);
+    opacity:0;
+    transform:translateY(8px);
+    transition: opacity .4s ease, transform .4s ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .wa-btn.applicable{ display:inline-block; }
+  .wa-btn.show{ opacity:1; transform:translateY(0); }
+  .wa-btn:hover{ transform:translateY(-2px); }
+
   /* ---------- angry sub-box ---------- */
   .angry-box{
     margin-top:20px;
@@ -893,6 +914,8 @@
 
       <p class="response" id="responseText"></p>
 
+      <a href="#" class="wa-btn" id="waBtn" target="_blank" rel="noopener noreferrer"></a>
+
       <div class="angry-box" id="angryBox">
         <p class="angry-question" data-i18n="angryQuestion"></p>
         <div class="angry-buttons">
@@ -1012,7 +1035,7 @@
 <script>
 (function(){
   // bump this together with version.json on every content update
-  var CURRENT_VERSION = 9;
+  var CURRENT_VERSION = 10;
 
   fetch('version.json?_=' + Date.now(), { cache: 'no-store' })
     .then(function(res){ return res.ok ? res.json() : null; })
@@ -1041,6 +1064,10 @@
       loved: "Más vale que sea por mí, porque si no me pongo bien celoso 😏",
       bored: "Si estás aburrida... ya sabes dónde encontrar diversión 😉",
       desire: "Si deseas apagar el fuego solo llama a la línea caliente que ya conoces... 😏",
+      waDesireLabel: "Contactar línea caliente",
+      waBoredLabel: "Encontrar Diversión",
+      waSickLabel: "Llamar a doctor Zebra",
+      waSadLabel: "Desahogarme",
       sadPool: [
         "Respira hondo, esto también va a pasar 🤍",
         "Está bien no estar bien, yo sigo aquí contigo.",
@@ -1073,6 +1100,10 @@
       loved: "It better be because of me, or I'm going to get really jealous 😏",
       bored: "If you're bored... you know where to find some fun 😉",
       desire: "If you want to put out the fire, just call the hotline you already know... 😏",
+      waDesireLabel: "Contact the hotline",
+      waBoredLabel: "Find some fun",
+      waSickLabel: "Call Doctor Zebra",
+      waSadLabel: "Vent to someone",
       sadPool: [
         "Take a deep breath, this will pass too 🤍",
         "It's okay not to be okay, I'm still right here with you.",
@@ -1105,6 +1136,10 @@
       loved: "Jobb, ha miattam van, mert különben nagyon féltékeny leszek 😏",
       bored: "Ha unatkozol... tudod, hol találsz egy kis szórakozást 😉",
       desire: "Ha el akarod oltani a tüzet, csak hívd a forródrótot, amit már ismersz... 😏",
+      waDesireLabel: "Hívd a forródrótot",
+      waBoredLabel: "Szórakozást keresni",
+      waSickLabel: "Hívd Zebra doktort",
+      waSadLabel: "Kiönteni a szívem",
       sadPool: [
         "Vegyél egy mély levegőt, ez is elmúlik majd 🤍",
         "Nem baj, ha nem vagy jól, itt vagyok veled.",
@@ -1138,6 +1173,7 @@
   var stage = document.getElementById("stage");
   var koalaScene = document.getElementById("koalaScene");
   var responseText = document.getElementById("responseText");
+  var waBtn = document.getElementById("waBtn");
   var koalaSvg = document.getElementById("koalaSvg");
   var koalaWrap = document.getElementById("koalaWrap");
   var moodBtns = document.querySelectorAll(".mood-btn");
@@ -1187,6 +1223,27 @@
       : dict[currentMood];
   }
 
+  // WhatsApp number, digits only (country code + number, no "+" or spaces)
+  var WA_NUMBER = "34658127799";
+  var waConfig = {
+    desire: { labelKey: "waDesireLabel", message: "Epa nesecito energía latina 😏🔥" },
+    bored:  { labelKey: "waBoredLabel",  message: "Estoy aburrida será que mi zebra me puede ayudar? 🫠" },
+    sick:   { labelKey: "waSickLabel",   message: "Estoy enfermita, nesecito cuidado y mimos porfi 🥹" },
+    sad:    { labelKey: "waSadLabel",    message: "Estoy triste 😢, tienes un momento para mí?" }
+  };
+
+  function renderWaButton(){
+    var wa = currentMood ? waConfig[currentMood] : null;
+    if(!wa){
+      waBtn.classList.remove("show", "applicable");
+      return;
+    }
+    waBtn.href = "https://wa.me/" + WA_NUMBER + "?text=" + encodeURIComponent(wa.message);
+    waBtn.textContent = translations[currentLang][wa.labelKey];
+    waBtn.classList.add("applicable");
+    waBtn.classList.add("show");
+  }
+
   function setLang(lang){
     if(!translations[lang]) lang = "es";
     currentLang = lang;
@@ -1205,6 +1262,7 @@
     try{ localStorage.setItem(STORAGE_KEY, lang); }catch(e){}
 
     renderResponse();
+    renderWaButton();
   }
 
   document.querySelectorAll(".lang-switch button").forEach(function(btn){
@@ -1251,6 +1309,7 @@
 
       renderResponse();
       responseText.classList.add("show");
+      renderWaButton();
       triggerPop();
 
       if(mood === "angry"){
