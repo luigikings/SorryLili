@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Sorry, Lili</title>
+<title>Koala</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,500&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -15,44 +15,41 @@
     --text-soft:#7a6360;
     --berenjena:#6d2f52;
     --rose:#c9749a;
-    --rose-light:#f2c9da;
-    --gold:#c9a24a;
     --sage:#889b70;
-    --sage-dark:#5c7048;
-    --btn-shadow: 0 10px 28px rgba(109,47,82,.28);
+    --btn-shadow: 0 10px 28px rgba(109,47,82,.22);
+
+    --koala-body:#a6a9ad;
+    --koala-body-dark:#84878b;
+    --koala-inner-ear:#e3b8c2;
+    --koala-muzzle:#efe7da;
+    --koala-nose:#3d3638;
+    --koala-blush:#f0a8b7;
   }
 
   *{ box-sizing:border-box; }
 
-  html,body{
-    height:100%;
-    margin:0;
-  }
+  html,body{ margin:0; }
 
   body{
     min-height:100svh;
     min-height:100vh;
     font-family:'Jost', sans-serif;
     color:var(--text-main);
-    background:
-      radial-gradient(circle at 50% 0%, #fffaf1 0%, var(--bg-1) 45%, var(--bg-2) 100%);
+    background: radial-gradient(circle at 50% 0%, #fffaf1 0%, var(--bg-1) 45%, var(--bg-2) 100%);
     display:flex;
+    flex-direction:column;
     align-items:center;
-    justify-content:center;
-    overflow:hidden;
   }
 
   .stage{
-    position:relative;
     width:100%;
-    max-width:520px;
-    min-height:100svh;
-    min-height:100vh;
+    max-width:480px;
     margin:0 auto;
-    padding:24px;
+    padding:76px 20px 60px;
     display:flex;
+    flex-direction:column;
     align-items:center;
-    justify-content:center;
+    text-align:center;
   }
 
   /* ---------- language switcher ---------- */
@@ -93,137 +90,40 @@
     background:rgba(109,47,82,.10);
   }
 
-  /* ---------- screens ---------- */
-  .screen{
-    position:absolute;
-    inset:0;
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    justify-content:center;
-    text-align:center;
-    padding:32px 20px;
-    opacity:0;
-    pointer-events:none;
-    transition: opacity 1s ease;
-  }
-
-  .screen.active{
-    opacity:1;
-    pointer-events:auto;
-  }
-
-  .msg{
+  /* ---------- heading ---------- */
+  .heading{
     font-family:'Cormorant Garamond', serif;
-    font-weight:500;
-    font-size:clamp(1.5rem, 6vw, 2.1rem);
-    line-height:1.35;
-    color:var(--text-main);
-    max-width:22ch;
-    margin:0 0 36px;
-  }
-
-  .msg-small{
-    margin:22px 0 0;
-    font-size:clamp(1.2rem, 5vw, 1.6rem);
-  }
-
-  /* ---------- confirm box ---------- */
-  .confirm-box{
-    margin-top:26px;
-    opacity:0;
-    transform:translateY(10px);
-  }
-
-  #screen2.opened .confirm-box{
-    animation: fadeInUp .8s ease forwards;
-    animation-delay: 1.9s;
-  }
-
-  @keyframes fadeInUp{
-    to{ opacity:1; transform:translateY(0); }
-  }
-
-  .question{
-    font-family:'Cormorant Garamond', serif;
-    font-weight:500;
-    font-size:clamp(1.1rem, 4.5vw, 1.35rem);
-    margin:0 0 16px;
+    font-weight:600;
+    font-size:clamp(1.6rem, 7vw, 2.2rem);
+    margin:0 0 8px;
     color:var(--text-main);
   }
 
-  .thanks-msg{
-    font-family:'Cormorant Garamond', serif;
-    font-size:clamp(1.2rem, 4.5vw, 1.5rem);
-    color:var(--berenjena);
-    margin:0;
-  }
-
-  .confirm-buttons{
-    display:flex;
-    gap:14px;
-    justify-content:center;
-  }
-
-  .btn-yes, .btn-no{
-    padding:12px 28px;
-    font-size:.92rem;
-  }
-
-  .btn-no{
-    background:transparent;
-    border:1.5px solid rgba(122,99,96,.35);
+  .subtext{
+    font-family:'Jost', sans-serif;
+    font-size:.95rem;
     color:var(--text-soft);
-    box-shadow:none;
+    margin:0 0 26px;
+    min-height:1.3em;
   }
 
-  .btn-no.dodging{
-    position:fixed;
-    z-index:30;
-    transition: left .28s ease, top .28s ease;
-  }
-
-  .accepted-content{
-    display:none;
-  }
-
-  .confirm-box.accepted .question,
-  .confirm-box.accepted .confirm-buttons{
-    display:none;
-  }
-
-  .confirm-box.accepted .accepted-content{
-    display:block;
-    animation: fadeInUp .6s ease;
-  }
-
-  .mood-box{
-    margin-top:24px;
-  }
-
-  .mood-title{
-    font-family:'Cormorant Garamond', serif;
-    font-weight:500;
-    font-size:clamp(1.05rem, 4.2vw, 1.2rem);
-    margin:0 0 14px;
-    color:var(--text-main);
-  }
-
+  /* ---------- mood buttons ---------- */
   .mood-options{
     display:flex;
+    flex-wrap:wrap;
     gap:10px;
     justify-content:center;
-    margin-bottom:14px;
+    margin-bottom:30px;
   }
 
   .mood-btn{
-    width:50px;
-    height:50px;
+    width:56px;
+    height:56px;
     padding:0;
     display:flex;
     align-items:center;
     justify-content:center;
-    font-size:1.5rem;
+    font-size:1.7rem;
     line-height:1;
     background:rgba(255,255,255,.55);
     border:1.5px solid transparent;
@@ -233,146 +133,118 @@
     -webkit-tap-highlight-color: transparent;
   }
 
-  .mood-btn:hover{
-    transform:translateY(-2px);
-  }
+  .mood-btn:hover{ transform:translateY(-2px); }
 
   .mood-btn.selected{
     border-color:var(--rose);
     background:#fffaf3;
-    transform:scale(1.08);
+    transform:scale(1.1);
   }
 
-  .mood-response{
-    font-family:'Jost', sans-serif;
-    font-size:.92rem;
-    line-height:1.55;
-    color:var(--text-soft);
-    min-height:1.4em;
-    max-width:30ch;
-    margin:0 auto;
+  /* ---------- koala ---------- */
+  .koala-breathe{
+    width:min(72vw, 280px);
+    filter: drop-shadow(0 16px 22px rgba(109,47,82,.16));
+    animation: idleBreathe 4s ease-in-out infinite;
   }
 
-  .btn{
-    font-family:'Jost', sans-serif;
-    font-size:1rem;
-    font-weight:500;
-    letter-spacing:.04em;
-    color:#fff8f0;
-    background:linear-gradient(135deg, var(--rose), var(--berenjena));
-    border:none;
-    padding:16px 42px;
-    border-radius:999px;
-    cursor:pointer;
-    box-shadow:var(--btn-shadow);
-    transition: transform .2s ease, box-shadow .2s ease;
-    -webkit-tap-highlight-color: transparent;
+  .koala-wrap{ cursor:pointer; }
+
+  .koala-wrap.pop{ animation: popBounce .55s ease; }
+  .koala-wrap.poked{ animation: wiggle .5s ease; }
+
+  .koala-svg{ width:100%; height:auto; display:block; overflow:visible; }
+
+  @keyframes idleBreathe{
+    0%, 100%{ transform:scale(1); }
+    50%{ transform:scale(1.02); }
   }
 
-  .btn:hover{
-    transform:translateY(-2px);
-    box-shadow:0 14px 32px rgba(109,47,82,.34);
+  @keyframes popBounce{
+    0%{ transform:scale(.85) rotate(0); }
+    40%{ transform:scale(1.1) rotate(-3deg); }
+    70%{ transform:scale(.97) rotate(2deg); }
+    100%{ transform:scale(1) rotate(0); }
   }
 
-  .btn:active{
-    transform:translateY(0px) scale(.97);
+  @keyframes wiggle{
+    0%, 100%{ transform:rotate(0); }
+    20%{ transform:rotate(-8deg); }
+    40%{ transform:rotate(7deg); }
+    60%{ transform:rotate(-5deg); }
+    80%{ transform:rotate(3deg); }
   }
 
-  /* ---------- flower ---------- */
-  .flower-wrap{
-    width:min(78vw, 300px);
-    filter: drop-shadow(0 18px 24px rgba(109,47,82,.16));
-  }
-
-  .lily-svg{
-    width:100%;
-    height:auto;
+  .koala-face{ display:none; }
+  #koalaSvg.mood-idle .face-idle,
+  #koalaSvg.mood-sad .face-sad,
+  #koalaSvg.mood-happy .face-happy,
+  #koalaSvg.mood-angry .face-angry,
+  #koalaSvg.mood-sleepy .face-sleepy,
+  #koalaSvg.mood-sick .face-sick{
     display:block;
-    overflow:visible;
   }
 
-  .plant{
-    transform-box: view-box;
-    transform-origin: 150px 392px;
+  @keyframes dripTear{
+    0%{ transform:translateY(0); opacity:1; }
+    75%{ opacity:1; }
+    100%{ transform:translateY(16px); opacity:0; }
   }
+  .face-sad .tear{ animation: dripTear 1.7s ease-in infinite; }
 
-  #screen2.swaying .plant{
-    animation: sway 5.5s ease-in-out infinite;
+  @keyframes floatZzz{
+    0%{ transform:translateY(0); opacity:0; }
+    18%{ opacity:1; }
+    100%{ transform:translateY(-20px); opacity:0; }
   }
+  .face-sleepy .zzz{ animation: floatZzz 2.6s ease-in-out infinite; }
 
-  @keyframes sway{
-    0%   { transform: rotate(-2deg); }
-    50%  { transform: rotate(2.2deg); }
-    100% { transform: rotate(-2deg); }
+  @keyframes steamFlicker{
+    0%, 100%{ opacity:.25; transform:translateY(0); }
+    50%{ opacity:1; transform:translateY(-4px); }
   }
+  .face-angry .steam{ animation: steamFlicker 1s ease-in-out infinite; }
 
-  .petal-rotate{
-    transform-box: view-box;
-    transform-origin: 0 0;
+  @keyframes sparklePulse{
+    0%, 100%{ opacity:.35; transform:scale(.75); }
+    50%{ opacity:1; transform:scale(1.15); }
   }
+  .face-happy .sparkle{ animation: sparklePulse 1.5s ease-in-out infinite; }
 
-  .petal-bloom{
-    transform-box: view-box;
-    transform-origin: 0 0;
-    transform: scale(.14);
-    opacity:.5;
+  @keyframes flushPulse{
+    0%, 100%{ opacity:.45; }
+    50%{ opacity:.85; }
   }
+  .face-sick .flush{ animation: flushPulse 1.7s ease-in-out infinite; }
 
-  #screen2.opened .petal-bloom{
-    animation: bloom 1.3s cubic-bezier(.31,1.4,.5,1) forwards;
-  }
-
-  .p1 .petal-bloom{ animation-delay: 0s; }
-  .p2 .petal-bloom{ animation-delay: .14s; }
-  .p3 .petal-bloom{ animation-delay: .28s; }
-  .p4 .petal-bloom{ animation-delay: .42s; }
-  .p5 .petal-bloom{ animation-delay: .56s; }
-  .p6 .petal-bloom{ animation-delay: .7s; }
-
-  @keyframes bloom{
-    0%   { transform: scale(.14); opacity:.5; }
-    60%  { opacity:1; }
-    100% { transform: scale(1); opacity:1; }
-  }
-
-  .stamens{
-    transform-box: view-box;
-    transform-origin: 150px 150px;
-    opacity:0;
-  }
-
-  #screen2.opened .stamens{
-    animation: fadeIn 1s ease forwards;
-    animation-delay: .95s;
-  }
-
-  @keyframes fadeIn{
-    to{ opacity:1; }
+  /* ---------- response ---------- */
+  .response{
+    font-family:'Cormorant Garamond', serif;
+    font-size:clamp(1.15rem, 4.6vw, 1.4rem);
+    line-height:1.5;
+    color:var(--berenjena);
+    max-width:26ch;
+    margin:26px 0 0;
+    min-height:1.6em;
   }
 
   footer.credit{
-    position:fixed;
-    bottom:10px;
-    left:0;
-    right:0;
+    margin-top:34px;
     text-align:center;
     font-size:11px;
     letter-spacing:.04em;
     color:var(--text-soft);
     opacity:.55;
-    pointer-events:none;
   }
 
   @media (prefers-reduced-motion: reduce){
-    .screen{ transition: opacity .4s linear; }
-    .petal-bloom{ transform: scale(1); opacity:1; }
-    #screen2.opened .petal-bloom{ animation: none; }
-    .stamens{ opacity:1; }
-    #screen2.opened .stamens{ animation: none; }
-    #screen2.swaying .plant{ animation: none; }
-    .confirm-box{ opacity:1; transform:none; }
-    #screen2.opened .confirm-box{ animation: none; }
-    .btn-no.dodging{ transition: none; }
+    .koala-breathe{ animation:none; }
+    .koala-wrap.pop, .koala-wrap.poked{ animation:none; }
+    .face-sad .tear,
+    .face-sleepy .zzz,
+    .face-angry .steam,
+    .face-happy .sparkle,
+    .face-sick .flush{ animation:none; opacity:1; }
   }
 </style>
 </head>
@@ -385,120 +257,132 @@
   </div>
 
   <main class="stage">
+    <h1 class="heading" data-i18n="heading"></h1>
+    <p class="subtext" id="subtext" data-i18n="idle"></p>
 
-    <section id="screen1" class="screen active">
-      <p class="msg" data-i18n="screen1"></p>
-      <button id="openBtn" class="btn" type="button" data-i18n="button"></button>
-    </section>
+    <div class="mood-options">
+      <button type="button" class="mood-btn" data-mood="sad">😢</button>
+      <button type="button" class="mood-btn" data-mood="happy">😊</button>
+      <button type="button" class="mood-btn" data-mood="angry">😠</button>
+      <button type="button" class="mood-btn" data-mood="sleepy">😴</button>
+      <button type="button" class="mood-btn" data-mood="sick">🤒</button>
+    </div>
 
-    <section id="screen2" class="screen">
-      <div class="flower-wrap">
-        <svg class="lily-svg" viewBox="0 0 300 400" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-          <defs>
-            <linearGradient id="petalInner" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%"  stop-color="#7d3258"/>
-              <stop offset="45%" stop-color="#d688a8"/>
-              <stop offset="100%" stop-color="#fdf3ec"/>
-            </linearGradient>
-            <linearGradient id="petalOuter" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%"  stop-color="#5f2544"/>
-              <stop offset="45%" stop-color="#c26f92"/>
-              <stop offset="100%" stop-color="#fbeee2"/>
-            </linearGradient>
-            <linearGradient id="stemGrad" x1="0" y1="0" x2="1" y2="0">
-              <stop offset="0%"  stop-color="#5c7048"/>
-              <stop offset="100%" stop-color="#8a9b70"/>
-            </linearGradient>
-          </defs>
+    <div class="koala-breathe">
+      <div class="koala-wrap" id="koalaWrap">
+        <svg class="koala-svg" id="koalaSvg" viewBox="0 0 300 340" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
 
-          <g class="plant">
-            <!-- stem -->
-            <path d="M150,392 C148,320 152,230 150,152" fill="none" stroke="url(#stemGrad)" stroke-width="6" stroke-linecap="round"/>
+          <!-- body -->
+          <ellipse cx="150" cy="290" rx="55" ry="40" fill="var(--koala-muzzle)" opacity=".9"/>
+          <ellipse cx="150" cy="296" rx="100" ry="62" fill="var(--koala-body)"/>
 
-            <!-- leaves -->
-            <path d="M150,300 C118,292 92,304 74,332 C104,332 132,322 150,300 Z" fill="var(--sage)"/>
-            <path d="M150,255 C184,244 210,254 228,280 C198,284 170,276 150,255 Z" fill="var(--sage-dark)"/>
+          <!-- ears -->
+          <circle cx="76" cy="82" r="38" fill="var(--koala-body-dark)"/>
+          <circle cx="224" cy="82" r="38" fill="var(--koala-body-dark)"/>
+          <ellipse cx="80" cy="86" rx="16" ry="20" fill="var(--koala-inner-ear)"/>
+          <ellipse cx="220" cy="86" rx="16" ry="20" fill="var(--koala-inner-ear)"/>
 
-            <!-- flower -->
-            <g class="flower">
+          <!-- head -->
+          <circle cx="150" cy="150" r="82" fill="var(--koala-body)"/>
 
-              <!-- outer tepals -->
-              <g class="petal-rotate p1" transform="translate(150 150) rotate(-90)">
-                <g class="petal-bloom">
-                  <path d="M0,0 C-19,-20 -32,-48 -29,-80 C-26,-106 -13,-124 0,-132 C13,-124 26,-106 29,-80 C32,-48 19,-20 0,0 Z" fill="url(#petalOuter)"/>
-                </g>
-              </g>
-              <g class="petal-rotate p3" transform="translate(150 150) rotate(30)">
-                <g class="petal-bloom">
-                  <path d="M0,0 C-19,-20 -32,-48 -29,-80 C-26,-106 -13,-124 0,-132 C13,-124 26,-106 29,-80 C32,-48 19,-20 0,0 Z" fill="url(#petalOuter)"/>
-                </g>
-              </g>
-              <g class="petal-rotate p5" transform="translate(150 150) rotate(150)">
-                <g class="petal-bloom">
-                  <path d="M0,0 C-19,-20 -32,-48 -29,-80 C-26,-106 -13,-124 0,-132 C13,-124 26,-106 29,-80 C32,-48 19,-20 0,0 Z" fill="url(#petalOuter)"/>
-                </g>
-              </g>
+          <!-- blush -->
+          <ellipse cx="94" cy="182" rx="15" ry="9" fill="var(--koala-blush)" opacity=".5"/>
+          <ellipse cx="206" cy="182" rx="15" ry="9" fill="var(--koala-blush)" opacity=".5"/>
 
-              <!-- inner tepals -->
-              <g class="petal-rotate p2" transform="translate(150 150) rotate(-30)">
-                <g class="petal-bloom">
-                  <path d="M0,0 C-16,-18 -27,-42 -25,-70 C-22,-93 -11,-108 0,-115 C11,-108 22,-93 25,-70 C27,-42 16,-18 0,0 Z" fill="url(#petalInner)"/>
-                </g>
-              </g>
-              <g class="petal-rotate p4" transform="translate(150 150) rotate(90)">
-                <g class="petal-bloom">
-                  <path d="M0,0 C-16,-18 -27,-42 -25,-70 C-22,-93 -11,-108 0,-115 C11,-108 22,-93 25,-70 C27,-42 16,-18 0,0 Z" fill="url(#petalInner)"/>
-                </g>
-              </g>
-              <g class="petal-rotate p6" transform="translate(150 150) rotate(210)">
-                <g class="petal-bloom">
-                  <path d="M0,0 C-16,-18 -27,-42 -25,-70 C-22,-93 -11,-108 0,-115 C11,-108 22,-93 25,-70 C27,-42 16,-18 0,0 Z" fill="url(#petalInner)"/>
-                </g>
-              </g>
+          <!-- muzzle + nose -->
+          <ellipse cx="150" cy="178" rx="56" ry="44" fill="var(--koala-muzzle)"/>
+          <ellipse cx="150" cy="155" rx="26" ry="18" fill="var(--koala-nose)"/>
+          <ellipse cx="142" cy="149" rx="5" ry="3" fill="#fff" opacity=".45"/>
 
-              <!-- stamens -->
-              <g class="stamens">
-                <path d="M150,150 C142,130 132,112 120,100" fill="none" stroke="var(--gold)" stroke-width="2"/>
-                <ellipse cx="118" cy="97" rx="5" ry="3" fill="var(--gold)" transform="rotate(-35 118 97)"/>
-                <path d="M150,150 C152,126 152,104 150,84" fill="none" stroke="var(--gold)" stroke-width="2"/>
-                <ellipse cx="150" cy="80" rx="5" ry="3" fill="var(--gold)"/>
-                <path d="M150,150 C158,130 168,112 180,100" fill="none" stroke="var(--gold)" stroke-width="2"/>
-                <ellipse cx="182" cy="97" rx="5" ry="3" fill="var(--gold)" transform="rotate(35 182 97)"/>
-                <path d="M150,150 C144,134 138,120 130,110" fill="none" stroke="var(--gold)" stroke-width="1.6"/>
-                <ellipse cx="128" cy="107" rx="4" ry="2.6" fill="var(--gold)" transform="rotate(-30 128 107)"/>
-                <path d="M150,150 C156,134 162,120 170,110" fill="none" stroke="var(--gold)" stroke-width="1.6"/>
-                <ellipse cx="172" cy="107" rx="4" ry="2.6" fill="var(--gold)" transform="rotate(30 172 107)"/>
-                <circle cx="150" cy="150" r="6" fill="var(--berenjena)"/>
-              </g>
+          <!-- ============ FACES ============ -->
 
+          <!-- idle -->
+          <g class="koala-face face-idle">
+            <ellipse cx="120" cy="120" rx="7" ry="9" fill="#3d3638"/>
+            <ellipse cx="180" cy="120" rx="7" ry="9" fill="#3d3638"/>
+            <ellipse cx="122" cy="117" rx="2" ry="2.4" fill="#fff" opacity=".7"/>
+            <ellipse cx="182" cy="117" rx="2" ry="2.4" fill="#fff" opacity=".7"/>
+            <path d="M138,178 Q150,186 162,178" fill="none" stroke="#3d3638" stroke-width="3" stroke-linecap="round"/>
+          </g>
+
+          <!-- sad -->
+          <g class="koala-face face-sad">
+            <path d="M108,104 Q120,96 132,106" fill="none" stroke="#3d3638" stroke-width="3" stroke-linecap="round"/>
+            <path d="M168,106 Q180,96 192,104" fill="none" stroke="#3d3638" stroke-width="3" stroke-linecap="round"/>
+            <ellipse cx="120" cy="122" rx="6.5" ry="8" fill="#3d3638"/>
+            <ellipse cx="180" cy="122" rx="6.5" ry="8" fill="#3d3638"/>
+            <path d="M138,182 Q150,172 162,182" fill="none" stroke="#3d3638" stroke-width="3" stroke-linecap="round"/>
+            <path class="tear" d="M183,130 C188,138 188,146 183,150 C178,146 178,138 183,130 Z" fill="#7db8d9"/>
+          </g>
+
+          <!-- happy -->
+          <g class="koala-face face-happy">
+            <path d="M108,118 Q120,106 132,118" fill="none" stroke="#3d3638" stroke-width="3.5" stroke-linecap="round"/>
+            <path d="M168,118 Q180,106 192,118" fill="none" stroke="#3d3638" stroke-width="3.5" stroke-linecap="round"/>
+            <path d="M128,170 Q150,196 172,170" fill="none" stroke="#3d3638" stroke-width="3.5" stroke-linecap="round"/>
+            <g class="sparkle">
+              <path d="M76,150 l3,8 l8,3 l-8,3 l-3,8 l-3,-8 l-8,-3 l8,-3 Z" fill="var(--gold, #c9a24a)"/>
+            </g>
+            <g class="sparkle" style="animation-delay:.5s">
+              <path d="M232,140 l2.5,7 l7,2.5 l-7,2.5 l-2.5,7 l-2.5,-7 l-7,-2.5 l7,-2.5 Z" fill="var(--gold, #c9a24a)"/>
             </g>
           </g>
+
+          <!-- angry -->
+          <g class="koala-face face-angry">
+            <path d="M108,112 L133,102" fill="none" stroke="#3d3638" stroke-width="4" stroke-linecap="round"/>
+            <path d="M192,112 L167,102" fill="none" stroke="#3d3638" stroke-width="4" stroke-linecap="round"/>
+            <ellipse cx="120" cy="124" rx="6" ry="7" fill="#3d3638"/>
+            <ellipse cx="180" cy="124" rx="6" ry="7" fill="#3d3638"/>
+            <path d="M136,180 L164,180" fill="none" stroke="#3d3638" stroke-width="3.5" stroke-linecap="round"/>
+            <g class="steam">
+              <path d="M118,44 Q112,34 118,24" fill="none" stroke="#b96a6a" stroke-width="3" stroke-linecap="round"/>
+            </g>
+            <g class="steam" style="animation-delay:.25s">
+              <path d="M150,38 Q144,28 150,18" fill="none" stroke="#b96a6a" stroke-width="3" stroke-linecap="round"/>
+            </g>
+            <g class="steam" style="animation-delay:.5s">
+              <path d="M182,44 Q176,34 182,24" fill="none" stroke="#b96a6a" stroke-width="3" stroke-linecap="round"/>
+            </g>
+          </g>
+
+          <!-- sleepy -->
+          <g class="koala-face face-sleepy">
+            <path d="M110,120 Q120,128 130,120" fill="none" stroke="#3d3638" stroke-width="3.5" stroke-linecap="round"/>
+            <path d="M170,120 Q180,128 190,120" fill="none" stroke="#3d3638" stroke-width="3.5" stroke-linecap="round"/>
+            <ellipse cx="150" cy="182" rx="8" ry="6" fill="#3d3638" opacity=".85"/>
+            <text class="zzz" x="196" y="70" font-family="Jost, sans-serif" font-weight="600" font-size="20" fill="var(--berenjena, #6d2f52)">z</text>
+            <text class="zzz" x="212" y="54" font-family="Jost, sans-serif" font-weight="600" font-size="15" fill="var(--berenjena, #6d2f52)" style="animation-delay:.6s">z</text>
+            <text class="zzz" x="224" y="42" font-family="Jost, sans-serif" font-weight="600" font-size="11" fill="var(--berenjena, #6d2f52)" style="animation-delay:1.2s">z</text>
+          </g>
+
+          <!-- sick -->
+          <g class="koala-face face-sick">
+            <path d="M112,116 L128,124 M128,116 L112,124" stroke="#3d3638" stroke-width="3" stroke-linecap="round"/>
+            <path d="M172,116 L188,124 M188,116 L172,124" stroke="#3d3638" stroke-width="3" stroke-linecap="round"/>
+            <path d="M140,182 Q150,178 158,182" fill="none" stroke="#3d3638" stroke-width="3" stroke-linecap="round"/>
+            <ellipse class="flush" cx="94" cy="182" rx="15" ry="9" fill="#8ba86b" opacity=".5"/>
+            <ellipse class="flush" cx="206" cy="182" rx="15" ry="9" fill="#8ba86b" opacity=".5"/>
+            <g transform="translate(176,178) rotate(25)">
+              <rect x="-3" y="-26" width="6" height="26" rx="3" fill="#fff" stroke="#c9a3a3" stroke-width="1.5"/>
+              <circle cx="0" cy="0" r="6.5" fill="#d1595f"/>
+            </g>
+            <g transform="translate(96,66) rotate(-12)">
+              <rect x="-11" y="-5" width="22" height="10" rx="3" fill="#f6efe6" stroke="#d8cdbd" stroke-width="1"/>
+              <line x1="-4" y1="-5" x2="-4" y2="5" stroke="#d8cdbd" stroke-width="1"/>
+              <line x1="4" y1="-5" x2="4" y2="5" stroke="#d8cdbd" stroke-width="1"/>
+            </g>
+          </g>
+
+          <!-- eucalyptus leaves -->
+          <path d="M40,300 C28,286 30,266 46,254 C50,272 48,288 40,300 Z" fill="var(--sage)" opacity=".9"/>
+          <path d="M260,300 C272,286 270,266 254,254 C250,272 252,288 260,300 Z" fill="var(--sage)" opacity=".9"/>
+
         </svg>
       </div>
-      <p class="msg msg-small" data-i18n="screen2"></p>
+    </div>
 
-      <div class="confirm-box" id="confirmBox">
-        <p class="question" data-i18n="question"></p>
-        <div class="confirm-buttons">
-          <button type="button" class="btn btn-yes" id="yesBtn" data-i18n="yes"></button>
-          <button type="button" class="btn btn-no" id="noBtn" data-i18n="no"></button>
-        </div>
-        <div class="accepted-content">
-          <p class="thanks-msg" data-i18n="thanks"></p>
-          <div class="mood-box">
-            <p class="mood-title" data-i18n="moodTitle"></p>
-            <div class="mood-options">
-              <button type="button" class="mood-btn" data-mood="sick">🤒</button>
-              <button type="button" class="mood-btn" data-mood="tired">😴</button>
-              <button type="button" class="mood-btn" data-mood="down">😔</button>
-              <button type="button" class="mood-btn" data-mood="good">🥰</button>
-            </div>
-            <p class="mood-response" id="moodResponse"></p>
-          </div>
-        </div>
-      </div>
-    </section>
-
+    <p class="response" id="responseText"></p>
   </main>
 
   <footer class="credit" data-i18n="credit"></footer>
@@ -506,7 +390,7 @@
 <script>
 (function(){
   // bump this together with version.json on every content update
-  var CURRENT_VERSION = 2;
+  var CURRENT_VERSION = 3;
 
   fetch('version.json?_=' + Date.now(), { cache: 'no-store' })
     .then(function(res){ return res.ok ? res.json() : null; })
@@ -524,70 +408,93 @@
 
   var translations = {
     es: {
-      screen1: "Disculpa 😢, aquí tienes un regalo en compensación",
-      button: "Ábrelo",
-      screen2: "acepta, este Lili como disculpas...",
-      question: "¿Aceptas mis disculpas?",
-      yes: "Sí",
-      no: "No",
-      thanks: "Gracias 💕",
-      moodTitle: "¿Cómo te sientes hoy?",
-      response_sick: "Métete en la cama y descansa, yo te cuido desde aquí. Te quiero mucho 🥺",
-      response_tired: "Duerme todo lo que necesites, no hay prisa. Aquí estaré cuando despiertes 💤",
-      response_down: "Ven aquí, te mando un abrazo enorme. Esto va a mejorar, lo prometo 🤍",
-      response_good: "¡Esa sonrisa me alegra el día! Sigamos así, cada vez mejor 🌸",
-      credit: "hecho con cariño"
+      heading: "¿Cómo se siente Koala hoy?",
+      idle: "Toca un emoji y cuéntame",
+      credit: "hecho con cariño",
+      happy: "Ya te lo dije, no dejes que nadie te quite esa sonrisa 😄",
+      angry: "Uy, esa carita me asusta un poquito 😅 Ven, te debo un abrazo (y prometo portarme mejor)",
+      sleepy: "Yo soy Dormir... Buenas noches... Duerme con los angelitos ❤️",
+      sick: "Descansa mucho, bebe agüita y deja que te cuide un poquito. Te vas a poner mejor 🌸",
+      sadPool: [
+        "Respira hondo, esto también va a pasar 🤍",
+        "Está bien no estar bien, yo sigo aquí contigo.",
+        "Eres mucho más fuerte de lo que crees, confía en ti.",
+        "Un mal momento no borra todas las cosas buenas que tienes.",
+        "Te mando un abrazo enorme desde aquí, no estás sola."
+      ]
     },
     en: {
-      screen1: "Sorry 😢, here's a gift to make up for it",
-      button: "Open it",
-      screen2: "accept this Lily as an apology...",
-      question: "Do you accept my apology?",
-      yes: "Yes",
-      no: "No",
-      thanks: "Thank you 💕",
-      moodTitle: "How are you feeling today?",
-      response_sick: "Curl up in bed and rest, I've got you from here. Love you so much 🥺",
-      response_tired: "Sleep as much as you need, no rush at all. I'll be here when you wake up 💤",
-      response_down: "Come here, sending you a huge hug. This will get better, I promise 🤍",
-      response_good: "That smile makes my whole day! Let's keep going, better and better 🌸",
-      credit: "made with love"
+      heading: "How is Koala feeling today?",
+      idle: "Tap an emoji and tell me",
+      credit: "made with love",
+      happy: "I told you so, don't let anyone take that smile away 😄",
+      angry: "Uh oh, that face scares me a little 😅 Come here, I owe you a hug (and I promise to behave better)",
+      sleepy: "I am Sleep... Good night... Sleep with the little angels ❤️",
+      sick: "Rest a lot, drink plenty of water, and let me take care of you a little. You'll feel better soon 🌸",
+      sadPool: [
+        "Take a deep breath, this will pass too 🤍",
+        "It's okay not to be okay, I'm still right here with you.",
+        "You're so much stronger than you think, trust yourself.",
+        "One bad moment doesn't erase all the good things you have.",
+        "Sending you a huge hug from here, you're not alone."
+      ]
     },
     hu: {
-      screen1: "Bocsánat 😢, itt egy ajándék kárpótlásul",
-      button: "Nyisd ki",
-      screen2: "fogadd el ezt a liliomot bocsánatkérésként...",
-      question: "Elfogadod a bocsánatkérésem?",
-      yes: "Igen",
-      no: "Nem",
-      thanks: "Köszönöm 💕",
-      moodTitle: "Hogy érzed magad ma?",
-      response_sick: "Bújj be az ágyba és pihenj, innen vigyázok rád. Nagyon szeretlek 🥺",
-      response_tired: "Aludj annyit, amennyire szükséged van, semmi sietség. Itt leszek, amikor felébredsz 💤",
-      response_down: "Gyere ide, küldök egy hatalmas ölelést. Ez jobb lesz, ígérem 🤍",
-      response_good: "Az a mosoly felderíti a napomat! Menjünk így tovább, egyre jobban 🌸",
-      credit: "szeretettel készült"
+      heading: "Hogy érzi magát ma Koala?",
+      idle: "Koppints egy emojira és mondd el",
+      credit: "szeretettel készült",
+      happy: "Megmondtam, ne hagyd, hogy bárki elvegye azt a mosolyt 😄",
+      angry: "Hoppá, az az arc egy kicsit megijeszt 😅 Gyere, tartozom egy öleléssel (és ígérem, jobban fogok viselkedni)",
+      sleepy: "Én vagyok az Álom... Jó éjt... Aludj az angyalkákkal ❤️",
+      sick: "Pihenj sokat, igyál sok vizet, és hagyd, hogy egy kicsit vigyázzak rád. Hamarosan jobban leszel 🌸",
+      sadPool: [
+        "Vegyél egy mély levegőt, ez is elmúlik majd 🤍",
+        "Nem baj, ha nem vagy jól, itt vagyok veled.",
+        "Sokkal erősebb vagy, mint hiszed, bízz magadban.",
+        "Egy rossz pillanat nem törli el a sok jó dolgot, amid van.",
+        "Küldök egy hatalmas ölelést innen, nem vagy egyedül."
+      ]
     }
   };
 
   var DEFAULT_LANG = "hu";
   var STORAGE_KEY = "sorrylili-lang";
   var currentLang = DEFAULT_LANG;
-  var selectedMood = null;
+  var currentMood = null;
+  var currentSadIndex = -1;
+
+  var subtext = document.getElementById("subtext");
+  var responseText = document.getElementById("responseText");
+  var koalaSvg = document.getElementById("koalaSvg");
+  var koalaWrap = document.getElementById("koalaWrap");
+  var moodBtns = document.querySelectorAll(".mood-btn");
+  var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   function detectLang(){
     try{
       var saved = localStorage.getItem(STORAGE_KEY);
       if(saved && translations[saved]) return saved;
     }catch(e){}
-
     return DEFAULT_LANG;
   }
 
-  function renderMoodResponse(){
-    if(!selectedMood) return;
-    var moodResponse = document.getElementById("moodResponse");
-    moodResponse.textContent = translations[currentLang]["response_" + selectedMood] || "";
+  function pickNewSadIndex(){
+    var pool = translations[currentLang].sadPool;
+    var idx;
+    do{ idx = Math.floor(Math.random() * pool.length); }
+    while(pool.length > 1 && idx === currentSadIndex);
+    currentSadIndex = idx;
+  }
+
+  function renderResponse(){
+    if(!currentMood){
+      responseText.textContent = "";
+      return;
+    }
+    var dict = translations[currentLang];
+    responseText.textContent = currentMood === "sad"
+      ? dict.sadPool[currentSadIndex >= 0 ? currentSadIndex : 0]
+      : dict[currentMood];
   }
 
   function setLang(lang){
@@ -608,79 +515,49 @@
 
     try{ localStorage.setItem(STORAGE_KEY, lang); }catch(e){}
 
-    renderMoodResponse();
+    if(currentMood){ subtext.textContent = ""; }
+    renderResponse();
   }
 
   document.querySelectorAll(".lang-switch button").forEach(function(btn){
-    btn.addEventListener("click", function(){
-      setLang(btn.getAttribute("data-lang"));
-    });
+    btn.addEventListener("click", function(){ setLang(btn.getAttribute("data-lang")); });
   });
 
   setLang(detectLang());
 
-  var screen1 = document.getElementById("screen1");
-  var screen2 = document.getElementById("screen2");
-  var openBtn = document.getElementById("openBtn");
-  var confirmBox = document.getElementById("confirmBox");
-  var yesBtn = document.getElementById("yesBtn");
-  var noBtn = document.getElementById("noBtn");
-  var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-  openBtn.addEventListener("click", function(){
-    screen1.classList.remove("active");
-    screen2.classList.add("active");
-    screen2.classList.add("opened");
-
-    if(reduceMotion){
-      screen2.classList.add("swaying");
-    }else{
-      window.setTimeout(function(){
-        screen2.classList.add("swaying");
-      }, 1650);
-    }
-  }, { once:true });
-
-  function dodgeNo(e){
-    if(e && e.cancelable) e.preventDefault();
-
-    if(!noBtn.classList.contains("dodging")){
-      var rect = noBtn.getBoundingClientRect();
-      noBtn.classList.add("dodging");
-      noBtn.style.left = rect.left + "px";
-      noBtn.style.top = rect.top + "px";
-      void noBtn.offsetWidth;
-    }
-
-    var pad = 16;
-    var w = noBtn.offsetWidth;
-    var h = noBtn.offsetHeight;
-    var maxX = Math.max(pad, window.innerWidth - w - pad);
-    var maxY = Math.max(pad, window.innerHeight - h - pad);
-    var x = pad + Math.random() * (maxX - pad);
-    var y = pad + Math.random() * (maxY - pad);
-
-    noBtn.style.left = x + "px";
-    noBtn.style.top = y + "px";
+  function triggerPop(){
+    koalaWrap.classList.remove("pop");
+    void koalaWrap.offsetWidth;
+    koalaWrap.classList.add("pop");
   }
 
-  noBtn.addEventListener("pointerenter", dodgeNo);
-  noBtn.addEventListener("touchstart", dodgeNo, { passive:false });
-  noBtn.addEventListener("click", dodgeNo);
-
-  yesBtn.addEventListener("click", function(){
-    confirmBox.classList.add("accepted");
-  });
-
-  document.querySelectorAll(".mood-btn").forEach(function(btn){
+  moodBtns.forEach(function(btn){
     btn.addEventListener("click", function(){
-      selectedMood = btn.dataset.mood;
-      document.querySelectorAll(".mood-btn").forEach(function(b){
-        b.classList.toggle("selected", b === btn);
-      });
-      renderMoodResponse();
+      var mood = btn.dataset.mood;
+
+      if(mood === "sad"){ pickNewSadIndex(); }
+
+      currentMood = mood;
+      subtext.textContent = "";
+
+      moodBtns.forEach(function(b){ b.classList.toggle("selected", b === btn); });
+
+      koalaSvg.classList.remove("mood-idle","mood-sad","mood-happy","mood-angry","mood-sleepy","mood-sick");
+      koalaSvg.classList.add("mood-" + mood);
+
+      renderResponse();
+      if(!reduceMotion) triggerPop();
     });
   });
+
+  koalaWrap.addEventListener("click", function(){
+    if(reduceMotion) return;
+    koalaWrap.classList.remove("poked");
+    void koalaWrap.offsetWidth;
+    koalaWrap.classList.add("poked");
+  });
+
+  koalaSvg.classList.add("mood-idle");
 
 })();
 </script>
