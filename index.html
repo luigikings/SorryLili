@@ -1035,7 +1035,7 @@
 <script>
 (function(){
   // bump this together with version.json on every content update
-  var CURRENT_VERSION = 10;
+  var CURRENT_VERSION = 11;
 
   fetch('version.json?_=' + Date.now(), { cache: 'no-store' })
     .then(function(res){ return res.ok ? res.json() : null; })
@@ -1068,6 +1068,9 @@
       waBoredLabel: "Encontrar Diversión",
       waSickLabel: "Llamar a doctor Zebra",
       waSadLabel: "Desahogarme",
+      waHappyLabel: "Compartir mi felicidad",
+      waSleepyLabel: "Mandar buenas noches",
+      waLovedLabel: "Enviar Amor",
       sadPool: [
         "Respira hondo, esto también va a pasar 🤍",
         "Está bien no estar bien, yo sigo aquí contigo.",
@@ -1104,6 +1107,9 @@
       waBoredLabel: "Find some fun",
       waSickLabel: "Call Doctor Zebra",
       waSadLabel: "Vent to someone",
+      waHappyLabel: "Share my happiness",
+      waSleepyLabel: "Send goodnight",
+      waLovedLabel: "Send Love",
       sadPool: [
         "Take a deep breath, this will pass too 🤍",
         "It's okay not to be okay, I'm still right here with you.",
@@ -1140,6 +1146,9 @@
       waBoredLabel: "Szórakozást keresni",
       waSickLabel: "Hívd Zebra doktort",
       waSadLabel: "Kiönteni a szívem",
+      waHappyLabel: "Megosztom a boldogságom",
+      waSleepyLabel: "Jó éjt küldeni",
+      waLovedLabel: "Szeretet küldése",
       sadPool: [
         "Vegyél egy mély levegőt, ez is elmúlik majd 🤍",
         "Nem baj, ha nem vagy jól, itt vagyok veled.",
@@ -1229,7 +1238,10 @@
     desire: { labelKey: "waDesireLabel", message: "Epa nesecito energía latina 😏🔥" },
     bored:  { labelKey: "waBoredLabel",  message: "Estoy aburrida será que mi zebra me puede ayudar? 🫠" },
     sick:   { labelKey: "waSickLabel",   message: "Estoy enfermita, nesecito cuidado y mimos porfi 🥹" },
-    sad:    { labelKey: "waSadLabel",    message: "Estoy triste 😢, tienes un momento para mí?" }
+    sad:    { labelKey: "waSadLabel",    message: "Estoy triste 😢, tienes un momento para mí?" },
+    happy:  { labelKey: "waHappyLabel",  message: "¿Cómo anda mi zebra? Yo ando bien feliz ☺️" },
+    sleepy: { labelKey: "waSleepyLabel", message: "Buenas noche mi zebra, ten dulces sueños y que duermas con los angelitos ❤️" },
+    loved:  { labelKey: "waLovedLabel",  message: "Te quiero muchooo cuchicuuuu ❤️" }
   };
 
   function renderWaButton(){
