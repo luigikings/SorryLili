@@ -29,6 +29,7 @@
 
     --petal-inner:#d688a8;
     --petal-outer:#7d3258;
+    --petal-center:#6d2f52;
   }
 
   *{ box-sizing:border-box; }
@@ -445,6 +446,14 @@
     100%{ transform:rotate(-2deg); }
   }
 
+  .lily-plant.flying-away{
+    animation: flyAway 1.1s ease-in forwards;
+  }
+  @keyframes flyAway{
+    0%{ transform:translate(0,0) rotate(0) scale(1); opacity:1; }
+    100%{ transform:translate(75px,-95px) rotate(35deg) scale(.55); opacity:0; }
+  }
+
   .petal-rotate{ transform-box:view-box; transform-origin:0 0; }
   .petal-bloom{
     transform-box:view-box;
@@ -780,7 +789,7 @@
                 <ellipse cx="150" cy="80" rx="5" ry="3" fill="var(--gold)"/>
                 <path d="M150,150 C158,130 168,112 180,100" fill="none" stroke="var(--gold)" stroke-width="2"/>
                 <ellipse cx="182" cy="97" rx="5" ry="3" fill="var(--gold)" transform="rotate(35 182 97)"/>
-                <circle cx="150" cy="150" r="6" fill="var(--berenjena)"/>
+                <circle cx="150" cy="150" r="6" fill="var(--petal-center)"/>
               </g>
             </g>
 
@@ -809,7 +818,7 @@
 <script>
 (function(){
   // bump this together with version.json on every content update
-  var CURRENT_VERSION = 5;
+  var CURRENT_VERSION = 6;
 
   fetch('version.json?_=' + Date.now(), { cache: 'no-store' })
     .then(function(res){ return res.ok ? res.json() : null; })
@@ -1056,7 +1065,24 @@
   var fallenCount = 0;
   var regrowTimer = null;
 
+  var lilyPalettes = [
+    { outer:"#7d3258", inner:"#d688a8", center:"#6d2f52" },
+    { outer:"#c1522a", inner:"#f2a56a", center:"#8a3a1c" },
+    { outer:"#5b4e8c", inner:"#b6a4dd", center:"#453a72" },
+    { outer:"#b8860b", inner:"#f4d488", center:"#8a660a" },
+    { outer:"#d998b0", inner:"#fbeaf1", center:"#c26f92" }
+  ];
+  var flowerIndex = 0;
+
+  function applyLilyPalette(i){
+    var p = lilyPalettes[i % lilyPalettes.length];
+    document.documentElement.style.setProperty("--petal-outer", p.outer);
+    document.documentElement.style.setProperty("--petal-inner", p.inner);
+    document.documentElement.style.setProperty("--petal-center", p.center);
+  }
+
   function showLily(){
+    applyLilyPalette(flowerIndex);
     lilyScene.classList.add("show");
     window.requestAnimationFrame(function(){
       lilyScene.classList.add("drawn");
@@ -1106,24 +1132,47 @@
         });
       }, 150);
 
-      regrowTimer = window.setTimeout(regrowPetals, 3600);
+      regrowTimer = window.setTimeout(nextFlower, 3600);
     }
   }
 
-  function regrowPetals(){
-    lilySvg.querySelectorAll(".petal-fall").forEach(function(p, i){
-      window.setTimeout(function(){
-        p.classList.remove("fallen");
-        p.classList.remove("regrowing");
-        void p.offsetWidth;
-        p.classList.add("regrowing");
-      }, i * 90);
+  function resetForNewFlower(){
+    lilySvg.querySelectorAll(".petal-fall").forEach(function(p){
+      p.classList.remove("fallen", "regrowing");
     });
     lilySvg.querySelectorAll(".petal-label").forEach(function(l){
       l.classList.remove("pop", "final");
     });
     pickCount = 0;
     fallenCount = 0;
+  }
+
+  function nextFlower(){
+    flowerIndex = (flowerIndex + 1) % lilyPalettes.length;
+
+    if(reduceMotion){
+      applyLilyPalette(flowerIndex);
+      resetForNewFlower();
+      return;
+    }
+
+    lilyScene.classList.remove("swaying");
+    var lilyPlant = lilySvg.querySelector(".lily-plant");
+    lilyPlant.classList.add("flying-away");
+
+    window.setTimeout(function(){
+      lilyPlant.classList.remove("flying-away");
+      applyLilyPalette(flowerIndex);
+      resetForNewFlower();
+
+      lilyScene.classList.remove("drawn");
+      void lilyScene.offsetWidth;
+      lilyScene.classList.add("drawn");
+
+      window.setTimeout(function(){
+        lilyScene.classList.add("swaying");
+      }, 1400);
+    }, 1100);
   }
 
 })();
