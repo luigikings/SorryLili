@@ -536,6 +536,115 @@
   }
   .lily-message.show{ opacity:1; transform:translateY(0); }
 
+  .petal-hint{
+    font-family:'Jost', sans-serif;
+    font-size:.85rem;
+    color:var(--text-soft);
+    margin:10px 0 0;
+    opacity:0;
+    transition: opacity .5s ease;
+  }
+  .petal-hint.show{ opacity:.8; }
+
+  /* ---------- forgive box ---------- */
+  .forgive-box{
+    margin-top:30px;
+    opacity:0;
+    transform:translateY(8px);
+    transition: opacity .6s ease, transform .6s ease;
+  }
+  .forgive-box.show{ opacity:1; transform:translateY(0); }
+
+  .forgive-question{
+    font-family:'Cormorant Garamond', serif;
+    font-size:1.1rem;
+    margin:0 0 12px;
+    color:var(--text-main);
+  }
+
+  .forgive-buttons{ display:flex; gap:12px; justify-content:center; }
+
+  .forgive-buttons button{
+    font-family:'Jost', sans-serif;
+    font-size:.9rem;
+    font-weight:500;
+    padding:10px 24px;
+    border-radius:999px;
+    cursor:pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  #forgiveYes{
+    border:none;
+    color:#fff8f0;
+    background:linear-gradient(135deg, var(--rose), var(--berenjena));
+    box-shadow:var(--btn-shadow);
+  }
+
+  #forgiveNo{
+    background:transparent;
+    border:1.5px solid rgba(122,99,96,.35);
+    color:var(--text-soft);
+  }
+
+  #forgiveNo.dodging{
+    position:fixed;
+    z-index:30;
+    transition: left .3s ease, top .3s ease;
+  }
+
+  .forgive-box.answered .forgive-question,
+  .forgive-box.answered .forgive-buttons{ display:none; }
+
+  .forgive-thanks{
+    display:none;
+    font-family:'Cormorant Garamond', serif;
+    font-size:1.1rem;
+    color:var(--berenjena);
+    margin:0;
+  }
+  .forgive-box.answered .forgive-thanks{ display:block; }
+
+  .forgive-hearts{ margin-top:8px; }
+  .forgive-hearts span{
+    display:inline-block;
+    font-size:20px;
+    margin:0 4px;
+    opacity:0;
+    color:#c0245a;
+  }
+  .forgive-hearts.burst span{ animation: heartPop 1.3s ease forwards; }
+  .forgive-hearts.burst span:nth-child(2){ animation-delay:.12s; }
+  .forgive-hearts.burst span:nth-child(3){ animation-delay:.24s; }
+  .forgive-hearts.burst span:nth-child(4){ animation-delay:.36s; }
+  @keyframes heartPop{
+    0%{ opacity:0; transform:translateY(0) scale(.4); }
+    30%{ opacity:1; }
+    100%{ opacity:0; transform:translateY(-28px) scale(1.15); }
+  }
+
+  .back-link{
+    display:inline-block;
+    margin-top:20px;
+    font-family:'Jost', sans-serif;
+    font-size:.85rem;
+    color:var(--text-soft);
+    text-decoration:none;
+    border-bottom:1px solid rgba(122,99,96,.35);
+    padding-bottom:1px;
+    opacity:0;
+    max-height:0;
+    overflow:hidden;
+    pointer-events:none;
+    transition: opacity .5s ease;
+    cursor:pointer;
+  }
+  .back-link.enabled{
+    opacity:.8;
+    max-height:40px;
+    pointer-events:auto;
+  }
+
   footer.credit{
     margin-top:34px;
     text-align:center;
@@ -561,6 +670,8 @@
     .petal-bloom{ transform:scale(1); opacity:1; }
     .lily-scene.drawn .petal-bloom{ animation:none; }
     .petal-fall.fallen, .petal-fall.regrowing{ transition:none; }
+    #forgiveNo.dodging{ transition:none; }
+    .forgive-hearts.burst span{ animation:none; opacity:1; }
   }
 </style>
 </head>
@@ -808,7 +919,23 @@
         </svg>
       </div>
 
+      <p class="petal-hint" id="petalHint" data-i18n="petalHint"></p>
+
       <p class="lily-message" id="lilyMessage" data-i18n="lilyMessage"></p>
+
+      <div class="forgive-box" id="forgiveBox">
+        <p class="forgive-question" data-i18n="forgiveQuestion"></p>
+        <div class="forgive-buttons">
+          <button type="button" id="forgiveYes" data-i18n="yes"></button>
+          <button type="button" id="forgiveNo" data-i18n="no"></button>
+        </div>
+        <p class="forgive-thanks" data-i18n="forgiveThanks"></p>
+        <div class="forgive-hearts" id="forgiveHearts">
+          <span>❤</span><span>❤</span><span>❤</span><span>❤</span>
+        </div>
+      </div>
+
+      <a href="#" class="back-link" id="backLink" data-i18n="backLink"></a>
     </div>
 
   </main>
@@ -818,7 +945,7 @@
 <script>
 (function(){
   // bump this together with version.json on every content update
-  var CURRENT_VERSION = 6;
+  var CURRENT_VERSION = 7;
 
   fetch('version.json?_=' + Date.now(), { cache: 'no-store' })
     .then(function(res){ return res.ok ? res.json() : null; })
@@ -859,7 +986,11 @@
       lilyMessage: "Perdón, toma este Lili para que aunque estés molesta conmigo siempre recuerdes lo mucho que te quiero... Perdón...",
       lovesMe: "Me ama",
       lovesMeNot: "No me ama",
-      lovesMeFinal: "¡Me ama! 💕"
+      lovesMeFinal: "¡Me ama! 💕",
+      petalHint: "Toca los pétalos",
+      forgiveQuestion: "¿Perdonas a tu zebra? 🥹",
+      forgiveThanks: "Gracias por perdonarme 💕",
+      backLink: "← Volver"
     },
     en: {
       loading: "Loading with love and care...",
@@ -885,7 +1016,11 @@
       lilyMessage: "Sorry, take this Lily so that even when you're upset with me, you'll always remember how much I love you... Sorry...",
       lovesMe: "Loves me",
       lovesMeNot: "Loves me not",
-      lovesMeFinal: "Loves me! 💕"
+      lovesMeFinal: "Loves me! 💕",
+      petalHint: "Tap the petals",
+      forgiveQuestion: "Do you forgive your zebra? 🥹",
+      forgiveThanks: "Thank you for forgiving me 💕",
+      backLink: "← Back"
     },
     hu: {
       loading: "Töltés szeretettel és gondoskodással...",
@@ -911,7 +1046,11 @@
       lilyMessage: "Bocsánat, fogadd el ezt a Lilit, hogy még ha mérges is vagy rám, mindig emlékezz rá, mennyire szeretlek... Bocsánat...",
       lovesMe: "Szeret",
       lovesMeNot: "Nem szeret",
-      lovesMeFinal: "Szeret! 💕"
+      lovesMeFinal: "Szeret! 💕",
+      petalHint: "Koppints a szirmokra",
+      forgiveQuestion: "Megbocsátasz a zebrádnak? 🥹",
+      forgiveThanks: "Köszönöm, hogy megbocsátasz 💕",
+      backLink: "← Vissza"
     }
   };
 
@@ -936,7 +1075,20 @@
   var lilyScene = document.getElementById("lilyScene");
   var lilySvg = document.getElementById("lilySvg");
   var lilyMessage = document.getElementById("lilyMessage");
+  var petalHint = document.getElementById("petalHint");
+  var introBlock = document.getElementById("introBlock");
+  var forgiveBox = document.getElementById("forgiveBox");
+  var forgiveYes = document.getElementById("forgiveYes");
+  var forgiveNo = document.getElementById("forgiveNo");
+  var forgiveHearts = document.getElementById("forgiveHearts");
+  var backLink = document.getElementById("backLink");
   var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  function buzz(pattern){
+    if(navigator.vibrate){
+      try{ navigator.vibrate(pattern); }catch(e){}
+    }
+  }
 
   function detectLang(){
     try{
@@ -1039,6 +1191,7 @@
   });
 
   koalaWrap.addEventListener("click", function(){
+    buzz(15);
     if(reduceMotion) return;
     koalaWrap.classList.remove("poked");
     void koalaWrap.offsetWidth;
@@ -1051,7 +1204,7 @@
   });
 
   angryYes.addEventListener("click", function(){
-    document.getElementById("introBlock").style.display = "none";
+    introBlock.style.display = "none";
     koalaScene.classList.add("leaving");
     window.setTimeout(function(){
       koalaScene.style.display = "none";
@@ -1059,11 +1212,27 @@
     }, reduceMotion ? 0 : 700);
   });
 
+  backLink.addEventListener("click", function(e){
+    e.preventDefault();
+    if(!backLink.classList.contains("enabled")) return;
+
+    if(regrowTimer){
+      window.clearTimeout(regrowTimer);
+      regrowTimer = null;
+    }
+
+    lilyScene.classList.remove("show", "drawn", "swaying");
+    introBlock.style.display = "";
+    koalaScene.style.display = "";
+    koalaScene.classList.remove("leaving");
+  });
+
   // ---------- lily scene ----------
   var petalLovesMe = [true, false, true, false, true];
   var pickCount = 0;
   var fallenCount = 0;
   var regrowTimer = null;
+  var petalListenersAttached = false;
 
   var lilyPalettes = [
     { outer:"#7d3258", inner:"#d688a8", center:"#6d2f52" },
@@ -1083,6 +1252,14 @@
 
   function showLily(){
     applyLilyPalette(flowerIndex);
+    resetForNewFlower();
+
+    forgiveBox.classList.remove("show", "answered");
+    forgiveHearts.classList.remove("burst");
+    backLink.classList.remove("enabled");
+    petalHint.classList.remove("show");
+    lilyMessage.classList.remove("show");
+
     lilyScene.classList.add("show");
     window.requestAnimationFrame(function(){
       lilyScene.classList.add("drawn");
@@ -1092,12 +1269,54 @@
     window.setTimeout(function(){
       lilyScene.classList.add("swaying");
       lilyMessage.classList.add("show");
+      petalHint.classList.add("show");
+      forgiveBox.classList.add("show");
     }, bloomTime + 200);
 
-    lilySvg.querySelectorAll(".petal-fall").forEach(function(p){
-      p.addEventListener("click", onPetalTap);
-    });
+    if(!petalListenersAttached){
+      lilySvg.querySelectorAll(".petal-fall").forEach(function(p){
+        p.addEventListener("click", onPetalTap);
+      });
+      petalListenersAttached = true;
+    }
   }
+
+  function dodgeForgiveNo(e){
+    if(e && e.cancelable) e.preventDefault();
+
+    if(!forgiveNo.classList.contains("dodging")){
+      var rect = forgiveNo.getBoundingClientRect();
+      forgiveNo.classList.add("dodging");
+      forgiveNo.style.left = rect.left + "px";
+      forgiveNo.style.top = rect.top + "px";
+      void forgiveNo.offsetWidth;
+    }
+
+    var pad = 16;
+    var w = forgiveNo.offsetWidth;
+    var h = forgiveNo.offsetHeight;
+    var maxX = Math.max(pad, window.innerWidth - w - pad);
+    var maxY = Math.max(pad, window.innerHeight - h - pad);
+    var x = pad + Math.random() * (maxX - pad);
+    var y = pad + Math.random() * (maxY - pad);
+
+    forgiveNo.style.left = x + "px";
+    forgiveNo.style.top = y + "px";
+  }
+
+  forgiveNo.addEventListener("pointerenter", dodgeForgiveNo);
+  forgiveNo.addEventListener("touchstart", dodgeForgiveNo, { passive:false });
+  forgiveNo.addEventListener("click", dodgeForgiveNo);
+
+  forgiveYes.addEventListener("click", function(){
+    if(forgiveBox.classList.contains("answered")) return;
+    forgiveBox.classList.add("answered");
+    buzz([25, 40, 25]);
+    forgiveHearts.classList.remove("burst");
+    void forgiveHearts.offsetWidth;
+    forgiveHearts.classList.add("burst");
+    backLink.classList.add("enabled");
+  });
 
   function onPetalTap(){
     var petalGroup = this;
@@ -1123,6 +1342,7 @@
     petalGroup.classList.add("fallen");
 
     if(isLast){
+      buzz([30, 50, 30, 50, 60]);
       window.setTimeout(function(){
         ["heart0","heart1","heart2"].forEach(function(id, i){
           var h = document.getElementById(id);
