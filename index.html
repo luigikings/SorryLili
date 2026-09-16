@@ -635,8 +635,34 @@
     transition: left .3s ease, top .3s ease;
   }
 
-  .forgive-box.answered .forgive-question,
-  .forgive-box.answered .forgive-buttons{ display:none; }
+  #notifyNo{
+    background:transparent;
+    border:1.5px solid rgba(122,99,96,.35);
+    color:var(--text-soft);
+  }
+
+  .btn-green{
+    border:none;
+    color:#fff;
+    background:#25D366;
+    box-shadow:0 8px 20px rgba(37,211,102,.28);
+  }
+
+  .notify-box{
+    margin-top:0;
+    opacity:0;
+    max-height:0;
+    overflow:hidden;
+    transition: opacity .4s ease, max-height .4s ease, margin-top .4s ease;
+  }
+  .notify-box.show{
+    opacity:1;
+    max-height:160px;
+    margin-top:22px;
+  }
+
+  .forgive-box.answered > .forgive-question,
+  .forgive-box.answered > .forgive-buttons{ display:none; }
 
   .forgive-thanks{
     display:none;
@@ -1023,6 +1049,14 @@
         <div class="forgive-hearts" id="forgiveHearts">
           <span>❤</span><span>❤</span><span>❤</span><span>❤</span>
         </div>
+
+        <div class="notify-box" id="notifyBox">
+          <p class="forgive-question" data-i18n="notifyQuestion"></p>
+          <div class="forgive-buttons">
+            <button type="button" id="notifyYes" class="btn-green" data-i18n="yes"></button>
+            <button type="button" id="notifyNo" data-i18n="no"></button>
+          </div>
+        </div>
       </div>
 
       <a href="#" class="back-link" id="backLink" data-i18n="backLink"></a>
@@ -1035,7 +1069,7 @@
 <script>
 (function(){
   // bump this together with version.json on every content update
-  var CURRENT_VERSION = 11;
+  var CURRENT_VERSION = 12;
 
   fetch('version.json?_=' + Date.now(), { cache: 'no-store' })
     .then(function(res){ return res.ok ? res.json() : null; })
@@ -1089,6 +1123,7 @@
       petalHint: "Toca los pétalos",
       forgiveQuestion: "¿Perdonas a tu zebra? 🥹",
       forgiveThanks: "Gracias por perdonarme 💕",
+      notifyQuestion: "¿Deseas avisarle que le perdonas?",
       backLink: "← Volver"
     },
     en: {
@@ -1128,6 +1163,7 @@
       petalHint: "Tap the petals",
       forgiveQuestion: "Do you forgive your zebra? 🥹",
       forgiveThanks: "Thank you for forgiving me 💕",
+      notifyQuestion: "Do you want to let them know you forgive them?",
       backLink: "← Back"
     },
     hu: {
@@ -1167,6 +1203,7 @@
       petalHint: "Koppints a szirmokra",
       forgiveQuestion: "Megbocsátasz a zebrádnak? 🥹",
       forgiveThanks: "Köszönöm, hogy megbocsátasz 💕",
+      notifyQuestion: "Szeretnéd tudatni vele, hogy megbocsátasz?",
       backLink: "← Vissza"
     }
   };
@@ -1199,6 +1236,9 @@
   var forgiveYes = document.getElementById("forgiveYes");
   var forgiveNo = document.getElementById("forgiveNo");
   var forgiveHearts = document.getElementById("forgiveHearts");
+  var notifyBox = document.getElementById("notifyBox");
+  var notifyYes = document.getElementById("notifyYes");
+  var notifyNo = document.getElementById("notifyNo");
   var backLink = document.getElementById("backLink");
   var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
@@ -1400,6 +1440,7 @@
 
     forgiveBox.classList.remove("show", "answered");
     forgiveHearts.classList.remove("burst");
+    notifyBox.classList.remove("show");
     backLink.classList.remove("enabled");
     petalHint.classList.remove("show");
     lilyMessage.classList.remove("show");
@@ -1479,6 +1520,20 @@
     void forgiveHearts.offsetWidth;
     forgiveHearts.classList.add("burst");
     backLink.classList.add("enabled");
+
+    window.setTimeout(function(){
+      notifyBox.classList.add("show");
+    }, 600);
+  });
+
+  notifyYes.addEventListener("click", function(){
+    var url = "https://wa.me/" + WA_NUMBER + "?text=" + encodeURIComponent("estaba molesta pero ya te perdoneee 😁");
+    window.open(url, "_blank", "noopener");
+    notifyBox.classList.remove("show");
+  });
+
+  notifyNo.addEventListener("click", function(){
+    notifyBox.classList.remove("show");
   });
 
   function onPetalTap(){
