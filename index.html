@@ -1069,7 +1069,7 @@
 <script>
 (function(){
   // bump this together with version.json on every content update
-  var CURRENT_VERSION = 12;
+  var CURRENT_VERSION = 13;
 
   fetch('version.json?_=' + Date.now(), { cache: 'no-store' })
     .then(function(res){ return res.ok ? res.json() : null; })
@@ -1248,6 +1248,35 @@
     }
   }
 
+  // short synthesized "koala chirp" — no audio file needed
+  var audioCtx = null;
+  function playKoalaSound(){
+    try{
+      var Ctx = window.AudioContext || window.webkitAudioContext;
+      if(!Ctx) return;
+      if(!audioCtx) audioCtx = new Ctx();
+      if(audioCtx.state === "suspended") audioCtx.resume();
+
+      var now = audioCtx.currentTime;
+      var osc = audioCtx.createOscillator();
+      var gain = audioCtx.createGain();
+
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(480, now);
+      osc.frequency.exponentialRampToValueAtTime(780, now + 0.08);
+      osc.frequency.exponentialRampToValueAtTime(600, now + 0.16);
+
+      gain.gain.setValueAtTime(0.0001, now);
+      gain.gain.exponentialRampToValueAtTime(0.22, now + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.2);
+
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start(now);
+      osc.stop(now + 0.22);
+    }catch(e){}
+  }
+
   function detectLang(){
     try{
       var saved = localStorage.getItem(STORAGE_KEY);
@@ -1376,6 +1405,7 @@
 
   koalaWrap.addEventListener("click", function(){
     buzz(15);
+    playKoalaSound();
     if(reduceMotion) return;
     koalaWrap.classList.remove("poked");
     void koalaWrap.offsetWidth;
