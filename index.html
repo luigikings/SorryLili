@@ -514,8 +514,8 @@
     border-color:transparent;
   }
 
-  /* ---------- background hearts ---------- */
-  .bg-hearts{
+  /* ---------- floating background effects (hearts / claps / happy) ---------- */
+  .bg-fx{
     position:fixed;
     inset:0;
     z-index:-1;
@@ -523,21 +523,21 @@
     pointer-events:none;
     display:none;
   }
-  .bg-hearts.show{ display:block; }
-  .bg-hearts span{
+  .bg-fx.show{ display:block; }
+  .bg-fx span{
     position:absolute;
     bottom:-10vh;
     color:#e0527a;
     opacity:0;
-    animation-name: floatBgHeart;
+    animation-name: floatBg;
     animation-timing-function: linear;
     animation-iteration-count: infinite;
   }
-  @keyframes floatBgHeart{
+  @keyframes floatBg{
     0%{ transform:translateY(0) scale(.85); opacity:0; }
-    10%{ opacity:.5; }
-    88%{ opacity:.4; }
-    100%{ transform:translateY(-120vh) scale(1.1); opacity:0; }
+    10%{ opacity:.6; }
+    88%{ opacity:.5; }
+    100%{ transform:translateY(-120vh) scale(1.15); opacity:0; }
   }
 
   /* ---------- angry sub-box ---------- */
@@ -885,7 +885,7 @@
     .face-bored .bored-dots,
     .face-desire .flame,
     .face-musical .note{ animation:none; opacity:1; }
-    .bg-hearts{ display:none !important; }
+    .bg-fx{ display:none !important; }
     .lily-scene .lily-plant{ animation:none; }
     .petal-bloom{ transform:scale(1); opacity:1; }
     .lily-scene.drawn .petal-bloom{ animation:none; }
@@ -897,15 +897,37 @@
 </head>
 <body>
 
-  <div class="bg-hearts" id="bgHearts" aria-hidden="true">
-    <span style="left:4%; animation-duration:11s; animation-delay:0s; font-size:18px;">❤</span>
-    <span style="left:16%; animation-duration:9s; animation-delay:1.2s; font-size:14px;">❤</span>
-    <span style="left:28%; animation-duration:13s; animation-delay:.4s; font-size:20px;">❤</span>
-    <span style="left:40%; animation-duration:10s; animation-delay:2.1s; font-size:15px;">❤</span>
-    <span style="left:54%; animation-duration:12s; animation-delay:.9s; font-size:19px;">❤</span>
-    <span style="left:67%; animation-duration:9.5s; animation-delay:1.7s; font-size:14px;">❤</span>
-    <span style="left:79%; animation-duration:11.5s; animation-delay:.2s; font-size:18px;">❤</span>
-    <span style="left:90%; animation-duration:10.5s; animation-delay:2.6s; font-size:16px;">❤</span>
+  <div class="bg-fx" id="bgHearts" aria-hidden="true">
+    <span style="left:4%; animation-duration:11s; animation-delay:0s; font-size:32px;">❤</span>
+    <span style="left:16%; animation-duration:9s; animation-delay:1.2s; font-size:24px;">❤</span>
+    <span style="left:28%; animation-duration:13s; animation-delay:.4s; font-size:34px;">❤</span>
+    <span style="left:40%; animation-duration:10s; animation-delay:2.1s; font-size:26px;">❤</span>
+    <span style="left:54%; animation-duration:12s; animation-delay:.9s; font-size:32px;">❤</span>
+    <span style="left:67%; animation-duration:9.5s; animation-delay:1.7s; font-size:24px;">❤</span>
+    <span style="left:79%; animation-duration:11.5s; animation-delay:.2s; font-size:32px;">❤</span>
+    <span style="left:90%; animation-duration:10.5s; animation-delay:2.6s; font-size:28px;">❤</span>
+  </div>
+
+  <div class="bg-fx" id="bgClaps" aria-hidden="true">
+    <span style="left:4%; animation-duration:11s; animation-delay:0s; font-size:30px;">👏</span>
+    <span style="left:16%; animation-duration:9s; animation-delay:1.2s; font-size:24px;">👏</span>
+    <span style="left:28%; animation-duration:13s; animation-delay:.4s; font-size:32px;">👏</span>
+    <span style="left:40%; animation-duration:10s; animation-delay:2.1s; font-size:26px;">👏</span>
+    <span style="left:54%; animation-duration:12s; animation-delay:.9s; font-size:30px;">👏</span>
+    <span style="left:67%; animation-duration:9.5s; animation-delay:1.7s; font-size:24px;">👏</span>
+    <span style="left:79%; animation-duration:11.5s; animation-delay:.2s; font-size:30px;">👏</span>
+    <span style="left:90%; animation-duration:10.5s; animation-delay:2.6s; font-size:26px;">👏</span>
+  </div>
+
+  <div class="bg-fx" id="bgHappy" aria-hidden="true">
+    <span style="left:4%; animation-duration:11s; animation-delay:0s; font-size:30px;">😄</span>
+    <span style="left:16%; animation-duration:9s; animation-delay:1.2s; font-size:24px;">🎉</span>
+    <span style="left:28%; animation-duration:13s; animation-delay:.4s; font-size:32px;">😊</span>
+    <span style="left:40%; animation-duration:10s; animation-delay:2.1s; font-size:26px;">✨</span>
+    <span style="left:54%; animation-duration:12s; animation-delay:.9s; font-size:30px;">🥳</span>
+    <span style="left:67%; animation-duration:9.5s; animation-delay:1.7s; font-size:24px;">😄</span>
+    <span style="left:79%; animation-duration:11.5s; animation-delay:.2s; font-size:30px;">🎉</span>
+    <span style="left:90%; animation-duration:10.5s; animation-delay:2.6s; font-size:26px;">😊</span>
   </div>
 
   <div class="loading-screen" id="loadingScreen">
@@ -1264,7 +1286,7 @@
 <script>
 (function(){
   // bump this together with version.json on every content update
-  var CURRENT_VERSION = 23;
+  var CURRENT_VERSION = 24;
 
   fetch('version.json?_=' + Date.now(), { cache: 'no-store' })
     .then(function(res){ return res.ok ? res.json() : null; })
@@ -1434,6 +1456,8 @@
   var playerTitle = document.getElementById("playerTitle");
   var songBtns = document.querySelectorAll(".song-btn");
   var bgHearts = document.getElementById("bgHearts");
+  var bgClaps = document.getElementById("bgClaps");
+  var bgHappy = document.getElementById("bgHappy");
   var koalaSvg = document.getElementById("koalaSvg");
   var koalaWrap = document.getElementById("koalaWrap");
   var moodBtns = document.querySelectorAll(".mood-btn");
@@ -1674,12 +1698,6 @@
     playerTitle.textContent = SONGS[key].title;
     songAudio.play().catch(function(){});
     updateSongButtons();
-
-    if(key === "baile"){
-      bgHearts.classList.add("show");
-    }else{
-      bgHearts.classList.remove("show");
-    }
   }
 
   playPauseBtn.addEventListener("click", toggleMusic);
@@ -1691,10 +1709,16 @@
   songAudio.addEventListener("play", function(){
     playPauseBtn.textContent = "⏸";
     playPauseBtn.setAttribute("aria-label", "Pause");
+    bgHearts.classList.toggle("show", currentSong === "baile");
+    bgClaps.classList.toggle("show", currentSong === "gitano");
+    bgHappy.classList.toggle("show", currentSong === "behappy");
   });
   songAudio.addEventListener("pause", function(){
     playPauseBtn.textContent = "▶";
     playPauseBtn.setAttribute("aria-label", "Play");
+    bgHearts.classList.remove("show");
+    bgClaps.classList.remove("show");
+    bgHappy.classList.remove("show");
   });
   songAudio.addEventListener("ended", function(){
     songProgress.value = 0;
@@ -1747,11 +1771,9 @@
       if(mood === "musical"){
         playerBox.classList.add("applicable");
         playerBox.classList.add("show");
-        if(currentSong === "baile"){ bgHearts.classList.add("show"); }
       }else{
         if(playerBox.classList.contains("applicable")) stopMusic();
         playerBox.classList.remove("show", "applicable");
-        bgHearts.classList.remove("show");
       }
     });
   });
