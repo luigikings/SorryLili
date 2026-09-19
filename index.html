@@ -514,24 +514,27 @@
     border-color:transparent;
   }
 
-  /* ---------- floating background effects (hearts / claps / happy) ---------- */
+  /* ---------- floating background effects (hearts / claps / happy) ----------
+     each span is fired individually via JS (add .fly, single run); pausing a
+     song just stops firing new ones, it never yanks ones already mid-flight */
   .bg-fx{
     position:fixed;
     inset:0;
     z-index:-1;
     overflow:hidden;
     pointer-events:none;
-    display:none;
   }
-  .bg-fx.show{ display:block; }
   .bg-fx span{
     position:absolute;
     bottom:-10vh;
     color:#e0527a;
     opacity:0;
+  }
+  .bg-fx span.fly{
     animation-name: floatBg;
     animation-timing-function: linear;
-    animation-iteration-count: infinite;
+    animation-iteration-count: 1;
+    animation-fill-mode: forwards;
   }
   @keyframes floatBg{
     0%{ transform:translateY(0) scale(.85); opacity:0; }
@@ -898,36 +901,36 @@
 <body>
 
   <div class="bg-fx" id="bgHearts" aria-hidden="true">
-    <span style="left:4%; animation-duration:11s; animation-delay:0s; font-size:32px;">❤</span>
-    <span style="left:16%; animation-duration:9s; animation-delay:1.2s; font-size:24px;">❤</span>
-    <span style="left:28%; animation-duration:13s; animation-delay:.4s; font-size:34px;">❤</span>
-    <span style="left:40%; animation-duration:10s; animation-delay:2.1s; font-size:26px;">❤</span>
-    <span style="left:54%; animation-duration:12s; animation-delay:.9s; font-size:32px;">❤</span>
-    <span style="left:67%; animation-duration:9.5s; animation-delay:1.7s; font-size:24px;">❤</span>
-    <span style="left:79%; animation-duration:11.5s; animation-delay:.2s; font-size:32px;">❤</span>
-    <span style="left:90%; animation-duration:10.5s; animation-delay:2.6s; font-size:28px;">❤</span>
+    <span style="left:4%; animation-duration:11s; font-size:32px;">❤</span>
+    <span style="left:16%; animation-duration:9s; font-size:24px;">❤</span>
+    <span style="left:28%; animation-duration:13s; font-size:34px;">❤</span>
+    <span style="left:40%; animation-duration:10s; font-size:26px;">❤</span>
+    <span style="left:54%; animation-duration:12s; font-size:32px;">❤</span>
+    <span style="left:67%; animation-duration:9.5s; font-size:24px;">❤</span>
+    <span style="left:79%; animation-duration:11.5s; font-size:32px;">❤</span>
+    <span style="left:90%; animation-duration:10.5s; font-size:28px;">❤</span>
   </div>
 
   <div class="bg-fx" id="bgClaps" aria-hidden="true">
-    <span style="left:4%; animation-duration:11s; animation-delay:0s; font-size:30px;">👏</span>
-    <span style="left:16%; animation-duration:9s; animation-delay:1.2s; font-size:24px;">👏</span>
-    <span style="left:28%; animation-duration:13s; animation-delay:.4s; font-size:32px;">👏</span>
-    <span style="left:40%; animation-duration:10s; animation-delay:2.1s; font-size:26px;">👏</span>
-    <span style="left:54%; animation-duration:12s; animation-delay:.9s; font-size:30px;">👏</span>
-    <span style="left:67%; animation-duration:9.5s; animation-delay:1.7s; font-size:24px;">👏</span>
-    <span style="left:79%; animation-duration:11.5s; animation-delay:.2s; font-size:30px;">👏</span>
-    <span style="left:90%; animation-duration:10.5s; animation-delay:2.6s; font-size:26px;">👏</span>
+    <span style="left:4%; animation-duration:11s; font-size:30px;">👏</span>
+    <span style="left:16%; animation-duration:9s; font-size:24px;">👏</span>
+    <span style="left:28%; animation-duration:13s; font-size:32px;">👏</span>
+    <span style="left:40%; animation-duration:10s; font-size:26px;">👏</span>
+    <span style="left:54%; animation-duration:12s; font-size:30px;">👏</span>
+    <span style="left:67%; animation-duration:9.5s; font-size:24px;">👏</span>
+    <span style="left:79%; animation-duration:11.5s; font-size:30px;">👏</span>
+    <span style="left:90%; animation-duration:10.5s; font-size:26px;">👏</span>
   </div>
 
   <div class="bg-fx" id="bgHappy" aria-hidden="true">
-    <span style="left:4%; animation-duration:11s; animation-delay:0s; font-size:30px;">😄</span>
-    <span style="left:16%; animation-duration:9s; animation-delay:1.2s; font-size:24px;">🎉</span>
-    <span style="left:28%; animation-duration:13s; animation-delay:.4s; font-size:32px;">😊</span>
-    <span style="left:40%; animation-duration:10s; animation-delay:2.1s; font-size:26px;">✨</span>
-    <span style="left:54%; animation-duration:12s; animation-delay:.9s; font-size:30px;">🥳</span>
-    <span style="left:67%; animation-duration:9.5s; animation-delay:1.7s; font-size:24px;">😄</span>
-    <span style="left:79%; animation-duration:11.5s; animation-delay:.2s; font-size:30px;">🎉</span>
-    <span style="left:90%; animation-duration:10.5s; animation-delay:2.6s; font-size:26px;">😊</span>
+    <span style="left:4%; animation-duration:11s; font-size:30px;">😄</span>
+    <span style="left:16%; animation-duration:9s; font-size:24px;">🎉</span>
+    <span style="left:28%; animation-duration:13s; font-size:32px;">😊</span>
+    <span style="left:40%; animation-duration:10s; font-size:26px;">✨</span>
+    <span style="left:54%; animation-duration:12s; font-size:30px;">🥳</span>
+    <span style="left:67%; animation-duration:9.5s; font-size:24px;">😄</span>
+    <span style="left:79%; animation-duration:11.5s; font-size:30px;">🎉</span>
+    <span style="left:90%; animation-duration:10.5s; font-size:26px;">😊</span>
   </div>
 
   <div class="loading-screen" id="loadingScreen">
@@ -1286,7 +1289,7 @@
 <script>
 (function(){
   // bump this together with version.json on every content update
-  var CURRENT_VERSION = 24;
+  var CURRENT_VERSION = 25;
 
   fetch('version.json?_=' + Date.now(), { cache: 'no-store' })
     .then(function(res){ return res.ok ? res.json() : null; })
@@ -1706,19 +1709,42 @@
   });
   updateSongButtons();
 
+  var BG_FX = { baile: bgHearts, gitano: bgClaps, behappy: bgHappy };
+  var fxSpawnTimer = null;
+
+  function spawnFx(container){
+    var spans = container.querySelectorAll("span");
+    var span = spans[Math.floor(Math.random() * spans.length)];
+    span.style.left = (3 + Math.random() * 92) + "%";
+    span.classList.remove("fly");
+    void span.offsetWidth;
+    span.classList.add("fly");
+  }
+
+  function startFx(key){
+    stopFx();
+    var container = BG_FX[key];
+    if(!container || reduceMotion) return;
+    spawnFx(container);
+    fxSpawnTimer = window.setInterval(function(){ spawnFx(container); }, 1400);
+  }
+
+  function stopFx(){
+    if(fxSpawnTimer){
+      window.clearInterval(fxSpawnTimer);
+      fxSpawnTimer = null;
+    }
+  }
+
   songAudio.addEventListener("play", function(){
     playPauseBtn.textContent = "⏸";
     playPauseBtn.setAttribute("aria-label", "Pause");
-    bgHearts.classList.toggle("show", currentSong === "baile");
-    bgClaps.classList.toggle("show", currentSong === "gitano");
-    bgHappy.classList.toggle("show", currentSong === "behappy");
+    startFx(currentSong);
   });
   songAudio.addEventListener("pause", function(){
     playPauseBtn.textContent = "▶";
     playPauseBtn.setAttribute("aria-label", "Play");
-    bgHearts.classList.remove("show");
-    bgClaps.classList.remove("show");
-    bgHappy.classList.remove("show");
+    stopFx();
   });
   songAudio.addEventListener("ended", function(){
     songProgress.value = 0;
