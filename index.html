@@ -1069,7 +1069,7 @@
 <script>
 (function(){
   // bump this together with version.json on every content update
-  var CURRENT_VERSION = 14;
+  var CURRENT_VERSION = 15;
 
   fetch('version.json?_=' + Date.now(), { cache: 'no-store' })
     .then(function(res){ return res.ok ? res.json() : null; })
@@ -1248,11 +1248,12 @@
     }
   }
 
-  // short synthesized "koala chirp" — no audio file needed.
-  // pitch, timing and volume are randomized a bit each call, plus an
-  // occasional quick double-chirp, so it never sounds exactly the same twice
-  var audioCtx = null;
-  function playKoalaSound(){
+  // real koala sound clip; playbackRate/volume are randomized a bit each
+  // time so repeated taps don't sound identical. Falls back to a tiny
+  // synthesized chirp if the file can't be loaded/played for some reason.
+  var KOALA_AUDIO_SRC = "Sonidos/KoalaSonido.wav";
+
+  function playSynthKoalaSound(){
     try{
       var Ctx = window.AudioContext || window.webkitAudioContext;
       if(!Ctx) return;
@@ -1260,39 +1261,34 @@
       if(audioCtx.state === "suspended") audioCtx.resume();
 
       var now = audioCtx.currentTime;
-      var base = 420 + Math.random() * 100;
-      var peak = base + 220 + Math.random() * 90;
-      var settle = base + 80 + Math.random() * 60;
-      var peakTime = 0.06 + Math.random() * 0.04;
-      var settleTime = peakTime + 0.06 + Math.random() * 0.05;
-      var totalTime = settleTime + 0.05;
-      var vol = 0.16 + Math.random() * 0.09;
-
-      function chirp(startOffset){
-        var t0 = now + startOffset;
-        var osc = audioCtx.createOscillator();
-        var gain = audioCtx.createGain();
-
-        osc.type = "sine";
-        osc.frequency.setValueAtTime(base, t0);
-        osc.frequency.exponentialRampToValueAtTime(peak, t0 + peakTime);
-        osc.frequency.exponentialRampToValueAtTime(settle, t0 + settleTime);
-
-        gain.gain.setValueAtTime(0.0001, t0);
-        gain.gain.exponentialRampToValueAtTime(vol, t0 + 0.02);
-        gain.gain.exponentialRampToValueAtTime(0.0001, t0 + totalTime);
-
-        osc.connect(gain);
-        gain.connect(audioCtx.destination);
-        osc.start(t0);
-        osc.stop(t0 + totalTime + 0.02);
-      }
-
-      chirp(0);
-      if(Math.random() < 0.3){
-        chirp(totalTime + 0.03);
-      }
+      var osc = audioCtx.createOscillator();
+      var gain = audioCtx.createGain();
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(480, now);
+      osc.frequency.exponentialRampToValueAtTime(780, now + 0.08);
+      osc.frequency.exponentialRampToValueAtTime(600, now + 0.16);
+      gain.gain.setValueAtTime(0.0001, now);
+      gain.gain.exponentialRampToValueAtTime(0.22, now + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.2);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start(now);
+      osc.stop(now + 0.22);
     }catch(e){}
+  }
+
+  var audioCtx = null;
+  function playKoalaSound(){
+    try{
+      var audio = new Audio(KOALA_AUDIO_SRC);
+      audio.playbackRate = 0.88 + Math.random() * 0.28;
+      audio.volume = 0.7 + Math.random() * 0.25;
+      audio.addEventListener("error", playSynthKoalaSound, { once:true });
+      var played = audio.play();
+      if(played && played.catch) played.catch(playSynthKoalaSound);
+    }catch(e){
+      playSynthKoalaSound();
+    }
   }
 
   function detectLang(){
