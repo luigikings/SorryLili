@@ -357,6 +357,13 @@
   }
   .face-desire .flame{ animation: flameFlicker 1.1s ease-in-out infinite; }
 
+  @keyframes floatNote{
+    0%{ transform:translateY(0) rotate(0); opacity:0; }
+    18%{ opacity:1; }
+    100%{ transform:translateY(-22px) rotate(8deg); opacity:0; }
+  }
+  .face-musical .note{ animation: floatNote 2.4s ease-in-out infinite; }
+
   /* ---------- response ---------- */
   .response{
     font-family:'Cormorant Garamond', serif;
@@ -392,6 +399,79 @@
   .wa-btn.applicable{ display:inline-block; }
   .wa-btn.show{ opacity:1; transform:translateY(0); }
   .wa-btn:hover{ transform:translateY(-2px); }
+
+  .player-box{
+    display:none;
+    margin-top:18px;
+    width:100%;
+    max-width:280px;
+    opacity:0;
+    transform:translateY(8px);
+    transition: opacity .4s ease, transform .4s ease;
+  }
+  .player-box.applicable{ display:flex; flex-direction:column; align-items:center; }
+  .player-box.show{ opacity:1; transform:translateY(0); }
+
+  .player-title{
+    font-family:'Jost', sans-serif;
+    font-size:.78rem;
+    color:var(--text-soft);
+    margin:0 0 10px;
+    text-align:center;
+    max-width:26ch;
+  }
+
+  .player-controls{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    width:100%;
+  }
+
+  .player-btn{
+    flex:none;
+    width:44px;
+    height:44px;
+    border-radius:50%;
+    border:none;
+    color:#fff8f0;
+    background:linear-gradient(135deg, var(--rose), var(--berenjena));
+    box-shadow:var(--btn-shadow);
+    font-size:1rem;
+    line-height:1;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .player-progress{
+    flex:1;
+    -webkit-appearance:none;
+    appearance:none;
+    height:5px;
+    border-radius:999px;
+    background:rgba(122,99,96,.22);
+    outline:none;
+    cursor:pointer;
+  }
+  .player-progress::-webkit-slider-thumb{
+    -webkit-appearance:none;
+    width:14px;
+    height:14px;
+    border-radius:50%;
+    background:var(--berenjena);
+    cursor:pointer;
+  }
+  .player-progress::-moz-range-thumb{
+    width:14px;
+    height:14px;
+    border:none;
+    border-radius:50%;
+    background:var(--berenjena);
+    cursor:pointer;
+  }
 
   /* ---------- angry sub-box ---------- */
   .angry-box{
@@ -736,7 +816,8 @@
     .face-loved .floaty-heart,
     .face-bored .droopy-eye,
     .face-bored .bored-dots,
-    .face-desire .flame{ animation:none; opacity:1; }
+    .face-desire .flame,
+    .face-musical .note{ animation:none; opacity:1; }
     .lily-scene .lily-plant{ animation:none; }
     .petal-bloom{ transform:scale(1); opacity:1; }
     .lily-scene.drawn .petal-bloom{ animation:none; }
@@ -774,6 +855,7 @@
         <button type="button" class="mood-btn" data-mood="loved">😍</button>
         <button type="button" class="mood-btn" data-mood="bored">🥱</button>
         <button type="button" class="mood-btn" data-mood="desire">🔥</button>
+        <button type="button" class="mood-btn" data-mood="musical">🎤</button>
       </div>
     </div>
 
@@ -929,6 +1011,25 @@
               </g>
             </g>
 
+            <g class="koala-face face-musical" data-mood="musical">
+              <rect x="103" y="107" width="35" height="23" rx="9" fill="#2b2b2e"/>
+              <rect x="162" y="107" width="35" height="23" rx="9" fill="#2b2b2e"/>
+              <rect x="138" y="114" width="24" height="4" rx="2" fill="#2b2b2e"/>
+              <path d="M103,113 L90,109" fill="none" stroke="#2b2b2e" stroke-width="3" stroke-linecap="round"/>
+              <path d="M197,113 L210,109" fill="none" stroke="#2b2b2e" stroke-width="3" stroke-linecap="round"/>
+              <ellipse cx="115" cy="115" rx="9" ry="6" fill="#fff" opacity=".18"/>
+              <ellipse cx="174" cy="115" rx="9" ry="6" fill="#fff" opacity=".18"/>
+              <ellipse cx="150" cy="181" rx="13" ry="11" fill="#3d3638"/>
+              <g transform="translate(150,206) rotate(-8)">
+                <rect x="-5" y="0" width="10" height="26" rx="4" fill="#5a5a5e"/>
+                <ellipse cx="0" cy="-9" rx="10" ry="14" fill="#cfd0d4" stroke="#3d3638" stroke-width="1.5"/>
+                <path d="M-6,-13 L6,-13 M-7,-9 L7,-9 M-6,-5 L6,-5" stroke="#8f9095" stroke-width="1.3"/>
+              </g>
+              <text class="note" x="88" y="66" font-family="Jost, sans-serif" font-size="18" fill="var(--berenjena)">♪</text>
+              <text class="note" x="222" y="82" font-family="Jost, sans-serif" font-size="14" fill="var(--berenjena)" style="animation-delay:.7s">♫</text>
+              <text class="note" x="206" y="56" font-family="Jost, sans-serif" font-size="12" fill="var(--berenjena)" style="animation-delay:1.4s">♪</text>
+            </g>
+
             <g class="draw-part part-4">
               <path d="M40,300 C28,286 30,266 46,254 C50,272 48,288 40,300 Z" fill="var(--sage)" opacity=".9"/>
               <path d="M260,300 C272,286 270,266 254,254 C250,272 252,288 260,300 Z" fill="var(--sage)" opacity=".9"/>
@@ -941,6 +1042,15 @@
       <p class="response" id="responseText"></p>
 
       <a href="#" class="wa-btn" id="waBtn" target="_blank" rel="noopener noreferrer"></a>
+
+      <div class="player-box" id="playerBox">
+        <p class="player-title">GITANO — A szívem megdobban</p>
+        <div class="player-controls">
+          <button type="button" id="playPauseBtn" class="player-btn" aria-label="Play">▶</button>
+          <input type="range" id="songProgress" class="player-progress" min="0" max="100" value="0" step="0.1">
+        </div>
+        <audio id="songAudio" src="Musica/gitano.mp3" preload="none"></audio>
+      </div>
 
       <div class="angry-box" id="angryBox">
         <p class="angry-question" data-i18n="angryQuestion"></p>
@@ -1069,7 +1179,7 @@
 <script>
 (function(){
   // bump this together with version.json on every content update
-  var CURRENT_VERSION = 19;
+  var CURRENT_VERSION = 20;
 
   fetch('version.json?_=' + Date.now(), { cache: 'no-store' })
     .then(function(res){ return res.ok ? res.json() : null; })
@@ -1105,6 +1215,7 @@
       waHappyLabel: "Compartir mi felicidad",
       waSleepyLabel: "Mandar buenas noches",
       waLovedLabel: "Enviar Amor",
+      musical: "Esta es nuestra canción... tócame para escucharla 🎵",
       sadPool: [
         "Respira hondo, esto también va a pasar 🤍",
         "Está bien no estar bien, yo sigo aquí contigo.",
@@ -1145,6 +1256,7 @@
       waHappyLabel: "Share my happiness",
       waSleepyLabel: "Send goodnight",
       waLovedLabel: "Send Love",
+      musical: "This is our song... tap me to listen 🎵",
       sadPool: [
         "Take a deep breath, this will pass too 🤍",
         "It's okay not to be okay, I'm still right here with you.",
@@ -1185,6 +1297,7 @@
       waHappyLabel: "Megosztom a boldogságom",
       waSleepyLabel: "Jó éjt küldeni",
       waLovedLabel: "Szeretet küldése",
+      musical: "Ez a mi dalunk... koppints rám, hogy halld 🎵",
       sadPool: [
         "Vegyél egy mély levegőt, ez is elmúlik majd 🤍",
         "Nem baj, ha nem vagy jól, itt vagyok veled.",
@@ -1220,6 +1333,10 @@
   var koalaScene = document.getElementById("koalaScene");
   var responseText = document.getElementById("responseText");
   var waBtn = document.getElementById("waBtn");
+  var playerBox = document.getElementById("playerBox");
+  var playPauseBtn = document.getElementById("playPauseBtn");
+  var songProgress = document.getElementById("songProgress");
+  var songAudio = document.getElementById("songAudio");
   var koalaSvg = document.getElementById("koalaSvg");
   var koalaWrap = document.getElementById("koalaWrap");
   var moodBtns = document.querySelectorAll(".mood-btn");
@@ -1424,6 +1541,44 @@
     koalaWrap.classList.add("pop");
   }
 
+  // ---------- music player ----------
+  function toggleMusic(){
+    if(songAudio.paused){
+      songAudio.play().catch(function(){});
+    }else{
+      songAudio.pause();
+    }
+  }
+
+  function stopMusic(){
+    songAudio.pause();
+    songAudio.currentTime = 0;
+  }
+
+  playPauseBtn.addEventListener("click", toggleMusic);
+
+  songAudio.addEventListener("play", function(){
+    playPauseBtn.textContent = "⏸";
+    playPauseBtn.setAttribute("aria-label", "Pause");
+  });
+  songAudio.addEventListener("pause", function(){
+    playPauseBtn.textContent = "▶";
+    playPauseBtn.setAttribute("aria-label", "Play");
+  });
+  songAudio.addEventListener("ended", function(){
+    songProgress.value = 0;
+  });
+  songAudio.addEventListener("timeupdate", function(){
+    if(songAudio.duration){
+      songProgress.value = (songAudio.currentTime / songAudio.duration) * 100;
+    }
+  });
+  songProgress.addEventListener("input", function(){
+    if(songAudio.duration){
+      songAudio.currentTime = (songProgress.value / 100) * songAudio.duration;
+    }
+  });
+
   moodBtns.forEach(function(btn){
     btn.addEventListener("click", function(){
       var mood = btn.dataset.mood;
@@ -1457,12 +1612,24 @@
       }else{
         angryBox.classList.remove("show");
       }
+
+      if(mood === "musical"){
+        playerBox.classList.add("applicable");
+        playerBox.classList.add("show");
+      }else{
+        if(playerBox.classList.contains("applicable")) stopMusic();
+        playerBox.classList.remove("show", "applicable");
+      }
     });
   });
 
   koalaWrap.addEventListener("click", function(){
     buzz(15);
-    playKoalaSound();
+    if(currentMood === "musical"){
+      toggleMusic();
+    }else{
+      playKoalaSound();
+    }
     if(reduceMotion) return;
     koalaWrap.classList.remove("poked");
     void koalaWrap.offsetWidth;
