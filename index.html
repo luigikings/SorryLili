@@ -483,6 +483,51 @@
     cursor:pointer;
   }
 
+  .our-song-btn{
+    margin-top:14px;
+    font-family:'Jost', sans-serif;
+    font-size:.85rem;
+    font-weight:500;
+    color:var(--berenjena);
+    background:#fff8f0;
+    border:1.5px solid rgba(109,47,82,.3);
+    padding:9px 20px;
+    border-radius:999px;
+    cursor:pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition: transform .15s ease, background .2s ease;
+  }
+  .our-song-btn:hover{
+    background:#fdeef5;
+    transform:translateY(-1px);
+  }
+
+  /* ---------- background hearts ---------- */
+  .bg-hearts{
+    position:fixed;
+    inset:0;
+    z-index:-1;
+    overflow:hidden;
+    pointer-events:none;
+    display:none;
+  }
+  .bg-hearts.show{ display:block; }
+  .bg-hearts span{
+    position:absolute;
+    bottom:-10vh;
+    color:#e0527a;
+    opacity:0;
+    animation-name: floatBgHeart;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+  }
+  @keyframes floatBgHeart{
+    0%{ transform:translateY(0) scale(.85); opacity:0; }
+    10%{ opacity:.5; }
+    88%{ opacity:.4; }
+    100%{ transform:translateY(-120vh) scale(1.1); opacity:0; }
+  }
+
   /* ---------- angry sub-box ---------- */
   .angry-box{
     margin-top:20px;
@@ -828,6 +873,7 @@
     .face-bored .bored-dots,
     .face-desire .flame,
     .face-musical .note{ animation:none; opacity:1; }
+    .bg-hearts{ display:none !important; }
     .lily-scene .lily-plant{ animation:none; }
     .petal-bloom{ transform:scale(1); opacity:1; }
     .lily-scene.drawn .petal-bloom{ animation:none; }
@@ -838,6 +884,17 @@
 </style>
 </head>
 <body>
+
+  <div class="bg-hearts" id="bgHearts" aria-hidden="true">
+    <span style="left:4%; animation-duration:11s; animation-delay:0s; font-size:18px;">❤</span>
+    <span style="left:16%; animation-duration:9s; animation-delay:1.2s; font-size:14px;">❤</span>
+    <span style="left:28%; animation-duration:13s; animation-delay:.4s; font-size:20px;">❤</span>
+    <span style="left:40%; animation-duration:10s; animation-delay:2.1s; font-size:15px;">❤</span>
+    <span style="left:54%; animation-duration:12s; animation-delay:.9s; font-size:19px;">❤</span>
+    <span style="left:67%; animation-duration:9.5s; animation-delay:1.7s; font-size:14px;">❤</span>
+    <span style="left:79%; animation-duration:11.5s; animation-delay:.2s; font-size:18px;">❤</span>
+    <span style="left:90%; animation-duration:10.5s; animation-delay:2.6s; font-size:16px;">❤</span>
+  </div>
 
   <div class="loading-screen" id="loadingScreen">
     <div class="spinner"></div>
@@ -1055,11 +1112,12 @@
 
       <div class="player-box" id="playerBox">
         <p class="player-hint" data-i18n="musical"></p>
-        <p class="player-title">GITANO — A szívem megdobban</p>
+        <p class="player-title" id="playerTitle">GITANO — A szívem megdobban</p>
         <div class="player-controls">
           <button type="button" id="playPauseBtn" class="player-btn" aria-label="Play">▶</button>
           <input type="range" id="songProgress" class="player-progress" min="0" max="100" value="0" step="0.1">
         </div>
+        <button type="button" id="ourSongBtn" class="our-song-btn" data-i18n="ourSong"></button>
         <audio id="songAudio" src="Musica/gitano.mp3" preload="none"></audio>
       </div>
 
@@ -1190,7 +1248,7 @@
 <script>
 (function(){
   // bump this together with version.json on every content update
-  var CURRENT_VERSION = 21;
+  var CURRENT_VERSION = 22;
 
   fetch('version.json?_=' + Date.now(), { cache: 'no-store' })
     .then(function(res){ return res.ok ? res.json() : null; })
@@ -1227,6 +1285,7 @@
       waSleepyLabel: "Mandar buenas noches",
       waLovedLabel: "Enviar Amor",
       musical: "Presiona el koala para que cante o pare de cantar",
+      ourSong: "Nuestra Canción",
       sadPool: [
         "Respira hondo, esto también va a pasar 🤍",
         "Está bien no estar bien, yo sigo aquí contigo.",
@@ -1268,6 +1327,7 @@
       waSleepyLabel: "Send goodnight",
       waLovedLabel: "Send Love",
       musical: "Press the koala to make it sing or stop singing",
+      ourSong: "Our Song",
       sadPool: [
         "Take a deep breath, this will pass too 🤍",
         "It's okay not to be okay, I'm still right here with you.",
@@ -1309,6 +1369,7 @@
       waSleepyLabel: "Jó éjt küldeni",
       waLovedLabel: "Szeretet küldése",
       musical: "Nyomd meg a koalát, hogy énekeljen vagy abbahagyja",
+      ourSong: "A mi dalunk",
       sadPool: [
         "Vegyél egy mély levegőt, ez is elmúlik majd 🤍",
         "Nem baj, ha nem vagy jól, itt vagyok veled.",
@@ -1348,6 +1409,9 @@
   var playPauseBtn = document.getElementById("playPauseBtn");
   var songProgress = document.getElementById("songProgress");
   var songAudio = document.getElementById("songAudio");
+  var playerTitle = document.getElementById("playerTitle");
+  var ourSongBtn = document.getElementById("ourSongBtn");
+  var bgHearts = document.getElementById("bgHearts");
   var koalaSvg = document.getElementById("koalaSvg");
   var koalaWrap = document.getElementById("koalaWrap");
   var moodBtns = document.querySelectorAll(".mood-btn");
@@ -1553,6 +1617,12 @@
   }
 
   // ---------- music player ----------
+  var SONGS = {
+    gitano: { src: "Musica/gitano.mp3", title: "GITANO — A szívem megdobban" },
+    baile:  { src: "Musica/baile-inolvidable.mp3", title: "Bad Bunny — Baile Inolvidable" }
+  };
+  var currentSong = "gitano";
+
   function toggleMusic(){
     if(songAudio.paused){
       songAudio.play().catch(function(){});
@@ -1566,7 +1636,24 @@
     songAudio.currentTime = 0;
   }
 
+  function switchSong(key){
+    currentSong = key;
+    songAudio.pause();
+    songAudio.src = SONGS[key].src;
+    songAudio.currentTime = 0;
+    songProgress.value = 0;
+    playerTitle.textContent = SONGS[key].title;
+    songAudio.play().catch(function(){});
+
+    if(key === "baile"){
+      bgHearts.classList.add("show");
+    }else{
+      bgHearts.classList.remove("show");
+    }
+  }
+
   playPauseBtn.addEventListener("click", toggleMusic);
+  ourSongBtn.addEventListener("click", function(){ switchSong("baile"); });
 
   songAudio.addEventListener("play", function(){
     playPauseBtn.textContent = "⏸";
@@ -1627,9 +1714,11 @@
       if(mood === "musical"){
         playerBox.classList.add("applicable");
         playerBox.classList.add("show");
+        if(currentSong === "baile"){ bgHearts.classList.add("show"); }
       }else{
         if(playerBox.classList.contains("applicable")) stopMusic();
         playerBox.classList.remove("show", "applicable");
+        bgHearts.classList.remove("show");
       }
     });
   });
