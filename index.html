@@ -1069,7 +1069,7 @@
 <script>
 (function(){
   // bump this together with version.json on every content update
-  var CURRENT_VERSION = 17;
+  var CURRENT_VERSION = 18;
 
   fetch('version.json?_=' + Date.now(), { cache: 'no-store' })
     .then(function(res){ return res.ok ? res.json() : null; })
@@ -1312,7 +1312,7 @@
         var gain = ctx.createGain();
         source.buffer = koalaBuffer;
         source.playbackRate.value = 0.88 + Math.random() * 0.28;
-        gain.gain.value = 0.22 + Math.random() * 0.11;
+        gain.gain.value = 0.11 + Math.random() * 0.055;
         source.connect(gain);
         gain.connect(ctx.destination);
         source.start(0);
@@ -1325,7 +1325,7 @@
     try{
       var audio = new Audio(KOALA_AUDIO_SRC);
       audio.playbackRate = 0.88 + Math.random() * 0.28;
-      audio.volume = 0.24 + Math.random() * 0.11;
+      audio.volume = 0.12 + Math.random() * 0.055;
       audio.addEventListener("error", playSynthKoalaSound, { once:true });
       var played = audio.play();
       if(played && played.catch) played.catch(playSynthKoalaSound);
