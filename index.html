@@ -483,23 +483,35 @@
     cursor:pointer;
   }
 
-  .our-song-btn{
+  .song-switch{
     margin-top:14px;
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    justify-content:center;
+  }
+
+  .song-btn{
     font-family:'Jost', sans-serif;
-    font-size:.85rem;
+    font-size:.78rem;
     font-weight:500;
     color:var(--berenjena);
     background:#fff8f0;
     border:1.5px solid rgba(109,47,82,.3);
-    padding:9px 20px;
+    padding:8px 14px;
     border-radius:999px;
     cursor:pointer;
     -webkit-tap-highlight-color: transparent;
-    transition: transform .15s ease, background .2s ease;
+    transition: transform .15s ease, background .2s ease, border-color .2s ease;
   }
-  .our-song-btn:hover{
+  .song-btn:hover{
     background:#fdeef5;
     transform:translateY(-1px);
+  }
+  .song-btn.active{
+    background:linear-gradient(135deg, var(--rose), var(--berenjena));
+    color:#fff8f0;
+    border-color:transparent;
   }
 
   /* ---------- background hearts ---------- */
@@ -1117,7 +1129,11 @@
           <button type="button" id="playPauseBtn" class="player-btn" aria-label="Play">▶</button>
           <input type="range" id="songProgress" class="player-progress" min="0" max="100" value="0" step="0.1">
         </div>
-        <button type="button" id="ourSongBtn" class="our-song-btn" data-i18n="ourSong"></button>
+        <div class="song-switch">
+          <button type="button" class="song-btn" data-song="gitano" data-i18n="songGitano"></button>
+          <button type="button" class="song-btn" data-song="baile" data-i18n="ourSong"></button>
+          <button type="button" class="song-btn" data-song="behappy" data-i18n="songFavorite"></button>
+        </div>
         <audio id="songAudio" src="Musica/gitano.mp3" preload="none"></audio>
       </div>
 
@@ -1248,7 +1264,7 @@
 <script>
 (function(){
   // bump this together with version.json on every content update
-  var CURRENT_VERSION = 22;
+  var CURRENT_VERSION = 23;
 
   fetch('version.json?_=' + Date.now(), { cache: 'no-store' })
     .then(function(res){ return res.ok ? res.json() : null; })
@@ -1286,6 +1302,8 @@
       waLovedLabel: "Enviar Amor",
       musical: "Presiona el koala para que cante o pare de cantar",
       ourSong: "Nuestra Canción",
+      songGitano: "Gitano",
+      songFavorite: "Tu Canción Favorita",
       sadPool: [
         "Respira hondo, esto también va a pasar 🤍",
         "Está bien no estar bien, yo sigo aquí contigo.",
@@ -1328,6 +1346,8 @@
       waLovedLabel: "Send Love",
       musical: "Press the koala to make it sing or stop singing",
       ourSong: "Our Song",
+      songGitano: "Gitano",
+      songFavorite: "Your Favorite Song",
       sadPool: [
         "Take a deep breath, this will pass too 🤍",
         "It's okay not to be okay, I'm still right here with you.",
@@ -1370,6 +1390,8 @@
       waLovedLabel: "Szeretet küldése",
       musical: "Nyomd meg a koalát, hogy énekeljen vagy abbahagyja",
       ourSong: "A mi dalunk",
+      songGitano: "Gitano",
+      songFavorite: "A kedvenc dalod",
       sadPool: [
         "Vegyél egy mély levegőt, ez is elmúlik majd 🤍",
         "Nem baj, ha nem vagy jól, itt vagyok veled.",
@@ -1410,7 +1432,7 @@
   var songProgress = document.getElementById("songProgress");
   var songAudio = document.getElementById("songAudio");
   var playerTitle = document.getElementById("playerTitle");
-  var ourSongBtn = document.getElementById("ourSongBtn");
+  var songBtns = document.querySelectorAll(".song-btn");
   var bgHearts = document.getElementById("bgHearts");
   var koalaSvg = document.getElementById("koalaSvg");
   var koalaWrap = document.getElementById("koalaWrap");
@@ -1618,8 +1640,9 @@
 
   // ---------- music player ----------
   var SONGS = {
-    gitano: { src: "Musica/gitano.mp3", title: "GITANO — A szívem megdobban" },
-    baile:  { src: "Musica/baile-inolvidable.mp3", title: "Bad Bunny — Baile Inolvidable" }
+    gitano:   { src: "Musica/gitano.mp3", title: "GITANO — A szívem megdobban" },
+    baile:    { src: "Musica/baile-inolvidable.mp3", title: "Bad Bunny — Baile Inolvidable" },
+    behappy:  { src: "Musica/be-happy.mp3", title: "Bobby McFerrin — Don't Worry, Be Happy" }
   };
   var currentSong = "gitano";
 
@@ -1636,6 +1659,12 @@
     songAudio.currentTime = 0;
   }
 
+  function updateSongButtons(){
+    songBtns.forEach(function(b){
+      b.classList.toggle("active", b.dataset.song === currentSong);
+    });
+  }
+
   function switchSong(key){
     currentSong = key;
     songAudio.pause();
@@ -1644,6 +1673,7 @@
     songProgress.value = 0;
     playerTitle.textContent = SONGS[key].title;
     songAudio.play().catch(function(){});
+    updateSongButtons();
 
     if(key === "baile"){
       bgHearts.classList.add("show");
@@ -1653,7 +1683,10 @@
   }
 
   playPauseBtn.addEventListener("click", toggleMusic);
-  ourSongBtn.addEventListener("click", function(){ switchSong("baile"); });
+  songBtns.forEach(function(btn){
+    btn.addEventListener("click", function(){ switchSong(btn.dataset.song); });
+  });
+  updateSongButtons();
 
   songAudio.addEventListener("play", function(){
     playPauseBtn.textContent = "⏸";
