@@ -1069,7 +1069,7 @@
 <script>
 (function(){
   // bump this together with version.json on every content update
-  var CURRENT_VERSION = 13;
+  var CURRENT_VERSION = 19;
 
   fetch('version.json?_=' + Date.now(), { cache: 'no-store' })
     .then(function(res){ return res.ok ? res.json() : null; })
@@ -1248,9 +1248,12 @@
     }
   }
 
-  // short synthesized "koala chirp" — no audio file needed
-  var audioCtx = null;
-  function playKoalaSound(){
+  // real koala sound clip; playbackRate/volume are randomized a bit each
+  // time so repeated taps don't sound identical. Falls back to a tiny
+  // synthesized chirp if the file can't be loaded/played for some reason.
+  var KOALA_AUDIO_SRC = "Sonidos/KoalaSonido.wav";
+
+  function playSynthKoalaSound(){
     try{
       var Ctx = window.AudioContext || window.webkitAudioContext;
       if(!Ctx) return;
@@ -1260,21 +1263,75 @@
       var now = audioCtx.currentTime;
       var osc = audioCtx.createOscillator();
       var gain = audioCtx.createGain();
-
       osc.type = "sine";
       osc.frequency.setValueAtTime(480, now);
       osc.frequency.exponentialRampToValueAtTime(780, now + 0.08);
       osc.frequency.exponentialRampToValueAtTime(600, now + 0.16);
-
       gain.gain.setValueAtTime(0.0001, now);
       gain.gain.exponentialRampToValueAtTime(0.22, now + 0.02);
       gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.2);
-
       osc.connect(gain);
       gain.connect(audioCtx.destination);
       osc.start(now);
       osc.stop(now + 0.22);
     }catch(e){}
+  }
+
+  var audioCtx = null;
+  var koalaBuffer = null;
+
+  function getAudioCtx(){
+    if(!audioCtx){
+      var Ctx = window.AudioContext || window.webkitAudioContext;
+      if(!Ctx) return null;
+      audioCtx = new Ctx();
+    }
+    return audioCtx;
+  }
+
+  // decode the clip into memory as soon as the page loads (no user
+  // gesture needed for this part), so the very first tap plays instantly
+  // instead of waiting on a fetch + decode
+  (function preloadKoalaBuffer(){
+    var ctx = getAudioCtx();
+    if(!ctx) return;
+    fetch(KOALA_AUDIO_SRC)
+      .then(function(res){ return res.arrayBuffer(); })
+      .then(function(data){ return ctx.decodeAudioData(data); })
+      .then(function(buf){ koalaBuffer = buf; })
+      .catch(function(){});
+  })();
+
+  function playKoalaSound(){
+    var ctx = getAudioCtx();
+    if(ctx && ctx.state === "suspended") ctx.resume();
+
+    if(ctx && koalaBuffer){
+      try{
+        var source = ctx.createBufferSource();
+        var gain = ctx.createGain();
+        source.buffer = koalaBuffer;
+        source.playbackRate.value = 0.88 + Math.random() * 0.28;
+        gain.gain.value = 0.055 + Math.random() * 0.0275;
+        source.connect(gain);
+        gain.connect(ctx.destination);
+        source.start(0);
+        return;
+      }catch(e){}
+    }
+
+    // buffer not ready yet (e.g. very first tap before the fetch finished)
+    // or something failed — fall back to a plain <audio> play
+    try{
+      var audio = new Audio(KOALA_AUDIO_SRC);
+      audio.playbackRate = 0.88 + Math.random() * 0.28;
+      audio.volume = 0.06 + Math.random() * 0.0275;
+      audio.addEventListener("error", playSynthKoalaSound, { once:true });
+      var played = audio.play();
+      if(played && played.catch) played.catch(playSynthKoalaSound);
+    }catch(e){
+      playSynthKoalaSound();
+    }
   }
 
   function detectLang(){
