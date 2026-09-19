@@ -412,6 +412,16 @@
   .player-box.applicable{ display:flex; flex-direction:column; align-items:center; }
   .player-box.show{ opacity:1; transform:translateY(0); }
 
+  .player-hint{
+    font-family:'Jost', sans-serif;
+    font-size:.75rem;
+    color:var(--text-soft);
+    opacity:.85;
+    margin:0 0 12px;
+    text-align:center;
+    max-width:24ch;
+  }
+
   .player-title{
     font-family:'Jost', sans-serif;
     font-size:.78rem;
@@ -1044,6 +1054,7 @@
       <a href="#" class="wa-btn" id="waBtn" target="_blank" rel="noopener noreferrer"></a>
 
       <div class="player-box" id="playerBox">
+        <p class="player-hint" data-i18n="musical"></p>
         <p class="player-title">GITANO — A szívem megdobban</p>
         <div class="player-controls">
           <button type="button" id="playPauseBtn" class="player-btn" aria-label="Play">▶</button>
@@ -1179,7 +1190,7 @@
 <script>
 (function(){
   // bump this together with version.json on every content update
-  var CURRENT_VERSION = 20;
+  var CURRENT_VERSION = 21;
 
   fetch('version.json?_=' + Date.now(), { cache: 'no-store' })
     .then(function(res){ return res.ok ? res.json() : null; })
@@ -1215,7 +1226,7 @@
       waHappyLabel: "Compartir mi felicidad",
       waSleepyLabel: "Mandar buenas noches",
       waLovedLabel: "Enviar Amor",
-      musical: "Esta es nuestra canción... tócame para escucharla 🎵",
+      musical: "Presiona el koala para que cante o pare de cantar",
       sadPool: [
         "Respira hondo, esto también va a pasar 🤍",
         "Está bien no estar bien, yo sigo aquí contigo.",
@@ -1256,7 +1267,7 @@
       waHappyLabel: "Share my happiness",
       waSleepyLabel: "Send goodnight",
       waLovedLabel: "Send Love",
-      musical: "This is our song... tap me to listen 🎵",
+      musical: "Press the koala to make it sing or stop singing",
       sadPool: [
         "Take a deep breath, this will pass too 🤍",
         "It's okay not to be okay, I'm still right here with you.",
@@ -1297,7 +1308,7 @@
       waHappyLabel: "Megosztom a boldogságom",
       waSleepyLabel: "Jó éjt küldeni",
       waLovedLabel: "Szeretet küldése",
-      musical: "Ez a mi dalunk... koppints rám, hogy halld 🎵",
+      musical: "Nyomd meg a koalát, hogy énekeljen vagy abbahagyja",
       sadPool: [
         "Vegyél egy mély levegőt, ez is elmúlik majd 🤍",
         "Nem baj, ha nem vagy jól, itt vagyok veled.",
@@ -1601,7 +1612,7 @@
       });
 
       renderResponse();
-      responseText.classList.add("show");
+      responseText.classList.toggle("show", mood !== "musical");
       renderWaButton();
       triggerPop();
 
