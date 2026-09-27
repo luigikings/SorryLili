@@ -550,6 +550,200 @@
     color:var(--berenjena);
     margin-top:14px !important;
   }
+  .letter-footer{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-end;
+    gap:10px;
+    margin-top:18px;
+  }
+  .letter-footer .letter-sign{ margin:0 !important; padding-bottom:4px; }
+
+  /* ---------- little gift inside the letter ---------- */
+  .gift-btn{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:18px;
+    max-width:130px;
+    padding:0;
+    border:0;
+    background:none;
+    cursor:pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .gift-hint{
+    font-family:'Caveat', cursive;
+    font-size:1.05rem;
+    line-height:1.1;
+    color:var(--rose);
+    text-align:center;
+  }
+  .gift-card{
+    position:relative;
+    display:block;
+    width:62px;
+    height:44px;
+    border-radius:6px;
+    background:linear-gradient(135deg, #f6c9dc, #e9a3c0);
+    box-shadow:0 6px 14px rgba(109,47,82,.22);
+    animation: giftWiggle 2.6s ease-in-out infinite, giftGlow 2.6s ease-in-out infinite;
+  }
+  .gift-card::before, .gift-card::after{
+    content:"";
+    position:absolute;
+    background:var(--gold);
+  }
+  .gift-card::before{ left:50%; top:0; bottom:0; width:7px; margin-left:-3.5px; }
+  .gift-card::after{ top:50%; left:0; right:0; height:7px; margin-top:-3.5px; }
+  .gift-bow{
+    position:absolute;
+    left:50%;
+    top:-15px;
+    transform:translateX(-50%);
+    font-size:1.25rem;
+    line-height:1;
+    z-index:1;
+  }
+  @keyframes giftWiggle{
+    0%, 62%, 100%{ transform:rotate(0) scale(1); }
+    68%{ transform:rotate(-9deg) scale(1.06); }
+    74%{ transform:rotate(8deg) scale(1.06); }
+    80%{ transform:rotate(-6deg) scale(1.04); }
+    86%{ transform:rotate(4deg) scale(1.02); }
+    92%{ transform:rotate(0) scale(1); }
+  }
+  @keyframes giftGlow{
+    0%, 100%{ box-shadow:0 6px 14px rgba(109,47,82,.22), 0 0 0 0 rgba(201,162,74,0); }
+    70%{ box-shadow:0 6px 14px rgba(109,47,82,.22), 0 0 16px 4px rgba(201,162,74,.45); }
+  }
+
+  /* ---------- massage voucher (full screen) ---------- */
+  .voucher-overlay{
+    position:fixed;
+    inset:0;
+    z-index:200;
+    display:none;
+    align-items:center;
+    justify-content:center;
+    padding:24px 16px;
+    background:rgba(60,24,46,.55);
+    -webkit-backdrop-filter: blur(3px);
+    backdrop-filter: blur(3px);
+    opacity:0;
+    transition: opacity .35s ease;
+    overflow:hidden;
+  }
+  .voucher-overlay.applicable{ display:flex; }
+  .voucher-overlay.show{ opacity:1; }
+  .voucher{
+    position:relative;
+    width:100%;
+    max-width:330px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    transform:scale(.4) rotate(-8deg);
+    opacity:0;
+  }
+  .voucher-overlay.show .voucher{ animation: voucherPop .75s cubic-bezier(.25,1.4,.4,1) forwards; }
+  @keyframes voucherPop{
+    0%{ transform:scale(.4) rotate(-8deg); opacity:0; }
+    60%{ transform:scale(1.05) rotate(2deg); opacity:1; }
+    100%{ transform:scale(1) rotate(0); opacity:1; }
+  }
+  .voucher-ticket{
+    position:relative;
+    width:100%;
+    padding:26px 22px 22px;
+    border-radius:18px;
+    background:linear-gradient(160deg, #fffaf3 0%, #fdeef4 100%);
+    box-shadow:0 22px 50px rgba(0,0,0,.28);
+    text-align:center;
+    color:var(--berenjena);
+  }
+  .voucher-ticket::before{
+    content:"";
+    position:absolute;
+    inset:8px;
+    border:2px dashed rgba(201,116,154,.55);
+    border-radius:12px;
+    pointer-events:none;
+  }
+  .voucher-kicker{
+    margin:0;
+    font-family:'Jost', sans-serif;
+    font-size:.72rem;
+    font-weight:600;
+    letter-spacing:.28em;
+    color:var(--gold);
+  }
+  .voucher-emoji{ font-size:3rem; line-height:1; margin:12px 0 8px; }
+  .voucher-title{
+    margin:0 0 10px;
+    font-family:'Cormorant Garamond', serif;
+    font-size:1.6rem;
+    font-weight:600;
+    line-height:1.15;
+  }
+  .voucher-text{
+    margin:0 0 14px;
+    font-family:'Caveat', cursive;
+    font-size:1.3rem;
+    line-height:1.25;
+    color:#4a3540;
+  }
+  .voucher-meta{
+    margin:0;
+    padding-top:12px;
+    border-top:1.5px dashed rgba(201,116,154,.4);
+    font-family:'Jost', sans-serif;
+    font-size:.75rem;
+    letter-spacing:.04em;
+    color:var(--rose);
+  }
+  .voucher-close{
+    position:absolute;
+    top:-14px;
+    right:-8px;
+    z-index:2;
+    width:36px;
+    height:36px;
+    border:0;
+    border-radius:50%;
+    background:#fff;
+    color:var(--berenjena);
+    font-size:1.3rem;
+    line-height:1;
+    box-shadow:0 6px 14px rgba(0,0,0,.2);
+    cursor:pointer;
+  }
+  .voucher-wa{
+    display:inline-block;
+    margin-top:18px;
+    font-family:'Jost', sans-serif;
+    font-size:.95rem;
+    font-weight:500;
+    color:#fff;
+    text-decoration:none;
+    background:#25D366;
+    padding:12px 26px;
+    border-radius:999px;
+    box-shadow:0 8px 20px rgba(37,211,102,.35);
+    -webkit-tap-highlight-color: transparent;
+  }
+  .voucher-burst{
+    position:absolute;
+    left:50%;
+    top:50%;
+    font-size:1.4rem;
+    pointer-events:none;
+    animation: voucherBurst 1.3s ease-out forwards;
+  }
+  @keyframes voucherBurst{
+    0%{ transform:translate(-50%,-50%) scale(.3); opacity:1; }
+    100%{ transform:translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(1.1); opacity:0; }
+  }
 
   /* ---------- response ---------- */
   .response{
@@ -1060,6 +1254,9 @@
   }
 
   @media (prefers-reduced-motion: reduce){
+    .gift-card{ animation:none; }
+    .voucher-overlay.show .voucher{ animation:none; transform:none; opacity:1; }
+    .voucher-burst{ display:none; }
     .koala-breathe{ animation:none; }
     .koala-wrap.pop, .koala-wrap.poked{ animation:none; }
     .draw-part{ opacity:1; transform:scale(1); }
@@ -1443,7 +1640,13 @@
             <p data-i18n="letterP12"></p>
             <p data-i18n="letterP13"></p>
             <p data-i18n="letterP14"></p>
-            <p class="letter-sign" data-i18n="letterSign"></p>
+            <div class="letter-footer">
+              <button type="button" class="gift-btn" id="giftBtn">
+                <span class="gift-hint" data-i18n="giftHint"></span>
+                <span class="gift-card" aria-hidden="true"><span class="gift-bow">🎀</span></span>
+              </button>
+              <p class="letter-sign" data-i18n="letterSign"></p>
+            </div>
           </div>
         </div>
       </div>
@@ -1572,10 +1775,24 @@
 
   <footer class="credit" data-i18n="credit"></footer>
 
+  <div class="voucher-overlay" id="voucherOverlay" aria-hidden="true">
+    <div class="voucher" role="dialog" aria-modal="true">
+      <button type="button" class="voucher-close" id="voucherClose" aria-label="Close">×</button>
+      <div class="voucher-ticket">
+        <p class="voucher-kicker" data-i18n="voucherKicker"></p>
+        <div class="voucher-emoji">💆‍♀️</div>
+        <h3 class="voucher-title" data-i18n="voucherTitle"></h3>
+        <p class="voucher-text" data-i18n="voucherText"></p>
+        <p class="voucher-meta" data-i18n="voucherMeta"></p>
+      </div>
+      <a href="#" class="voucher-wa" id="voucherWa" target="_blank" rel="noopener noreferrer" data-i18n="voucherBtn"></a>
+    </div>
+  </div>
+
 <script>
 (function(){
   // bump this together with version.json on every content update
-  var CURRENT_VERSION = 30;
+  var CURRENT_VERSION = 31;
 
   fetch('version.json?_=' + Date.now(), { cache: 'no-store' })
     .then(function(res){ return res.ok ? res.json() : null; })
@@ -1630,6 +1847,12 @@
       letterP13: "No encuentro más palabras para decirte lo mucho que te aprecio. A lo mejor suena como si hablara de alguien a quien conozco desde hace años, pero en tu caso te lo digo de verdad, y te lo dije hace mucho: la conexión que siento que tenemos tú y yo es muy loca. Y yo soy una persona que aprecia mucho ese tipo de cosas, ese tipo de conexiones, y a la gente. Por eso estoy intentando dejártelo claro aquí. Por si algún día tienes alguna duda: aquí lo tienes.",
       letterP14: "Eres mi motivación, eres mi felicidad, eres mi Koala, eres mi cuchicú. Y de la misma forma que tú eres todo eso para mí, yo estoy intentando dar lo máximo para serlo para ti.",
       letterSign: "Tu Zebra 🦓",
+      giftHint: "Aquí te dejo un regalito 🎁",
+      voucherKicker: "VALE REGALO",
+      voucherTitle: "Un masaje gratis lleno de amor",
+      voucherText: "Por causar problemas, aquí te dejo un vale para un masaje gratis lleno de amor. Canjéalo cuando quieras 💕",
+      voucherMeta: "Para: mi Koala · Caduca: nunca",
+      voucherBtn: "Reservar canje 💬",
       ourSong: "Nuestra Canción",
       songGitano: "Gitano",
       songFavorite: "Tu Canción Favorita",
@@ -1692,6 +1915,12 @@
       letterP13: "I can't find any more words to tell you how much I appreciate you. Maybe it sounds like I'm talking about someone I've known for years, but with you I really mean it, and I told you a long time ago: the connection I feel we have is crazy. And I'm someone who really values that kind of thing, that kind of connection, and people. That's why I'm trying to make it clear here. So if one day you ever have any doubt: here it is.",
       letterP14: "You're my motivation, you're my happiness, you're my Koala, you're my cuchicú. And in the same way that you are all of that for me, I'm trying my very best to be that for you.",
       letterSign: "Your Zebra 🦓",
+      giftHint: "Here's a little gift for you 🎁",
+      voucherKicker: "GIFT VOUCHER",
+      voucherTitle: "A free massage full of love",
+      voucherText: "For causing trouble, here's a voucher for a free massage full of love. Redeem it whenever you want 💕",
+      voucherMeta: "For: my Koala · Expires: never",
+      voucherBtn: "Redeem my voucher 💬",
       ourSong: "Our Song",
       songGitano: "Gitano",
       songFavorite: "Your Favorite Song",
@@ -1754,6 +1983,12 @@
       letterP13: "Nem találok több szót arra, hogy elmondjam, mennyire becsüllek. Lehet, hogy úgy hangzik, mintha valakiről beszélnék, akit évek óta ismerek, de nálad tényleg komolyan mondom, és már régen is mondtam: az a kapcsolat, amit köztünk érzek, őrült. És én olyan ember vagyok, aki nagyon értékeli az ilyen dolgokat, az ilyen kapcsolatokat, és az embereket. Ezért próbálom most itt egyértelművé tenni. Ha egyszer bármikor kételkednél: itt van.",
       letterP14: "Te vagy a motivációm, te vagy a boldogságom, te vagy a Koalám, te vagy az én cuchicúm. És ahogy te mindez vagy nekem, én is mindent megteszek, hogy ez lehessek neked.",
       letterSign: "A Zebrád 🦓",
+      giftHint: "Itt hagyok neked egy kis ajándékot 🎁",
+      voucherKicker: "AJÁNDÉKUTALVÁNY",
+      voucherTitle: "Egy ingyen masszázs, tele szeretettel",
+      voucherText: "Amiért bajt okoztam, itt hagyok neked egy utalványt egy ingyen masszázsra, tele szeretettel. Váltsd be, amikor csak szeretnéd 💕",
+      voucherMeta: "Kinek: a Koalámnak · Lejárat: soha",
+      voucherBtn: "Beváltom az utalványt 💬",
       ourSong: "A mi dalunk",
       songGitano: "Gitano",
       songFavorite: "A kedvenc dalod",
@@ -2153,6 +2388,7 @@
         window.requestAnimationFrame(function(){ sorryBox.classList.add("show"); });
       }else{
         sorryBox.classList.remove("show", "applicable");
+        closeVoucher();
       }
     });
   });
@@ -2161,6 +2397,7 @@
   var letterTimer = null;
 
   function resetEnvelope(){
+    closeVoucher();
     if(letterTimer){ window.clearTimeout(letterTimer); letterTimer = null; }
     envelope.classList.remove("open");
     envelopeWrap.classList.remove("gone");
@@ -2175,6 +2412,62 @@
       envelopeWrap.classList.add("gone");
       letter.classList.add("show");
     }, reduceMotion ? 0 : 1300);
+  });
+
+  // ---------- massage voucher ----------
+  var giftBtn = document.getElementById("giftBtn");
+  var voucherOverlay = document.getElementById("voucherOverlay");
+  var voucherClose = document.getElementById("voucherClose");
+  var voucherWa = document.getElementById("voucherWa");
+  var VOUCHER_MSG = "Hey Cuchicú, I want to redeem my massage voucher 💆‍♀️💕";
+  voucherWa.href = "https://wa.me/" + WA_NUMBER + "?text=" + encodeURIComponent(VOUCHER_MSG);
+  var voucherTimer = null;
+
+  function voucherBurst(){
+    var icons = ["💕", "✨", "💖", "🌸", "✨", "💗"];
+    for(var i = 0; i < 12; i++){
+      var el = document.createElement("span");
+      el.className = "voucher-burst";
+      el.textContent = icons[i % icons.length];
+      var angle = (Math.PI * 2 * i) / 12 + Math.random() * 0.4;
+      var dist = 130 + Math.random() * 70;
+      el.style.setProperty("--dx", Math.round(Math.cos(angle) * dist) + "px");
+      el.style.setProperty("--dy", Math.round(Math.sin(angle) * dist) + "px");
+      voucherOverlay.appendChild(el);
+      (function(node){ window.setTimeout(function(){ node.remove(); }, 1400); })(el);
+    }
+  }
+
+  function openVoucher(){
+    if(voucherTimer){ window.clearTimeout(voucherTimer); voucherTimer = null; }
+    voucherOverlay.classList.add("applicable");
+    voucherOverlay.setAttribute("aria-hidden", "false");
+    document.documentElement.style.overflow = "hidden";
+    window.requestAnimationFrame(function(){
+      window.requestAnimationFrame(function(){ voucherOverlay.classList.add("show"); });
+    });
+    buzz([20, 40, 20, 40, 30]);
+    if(!reduceMotion) voucherBurst();
+  }
+
+  function closeVoucher(){
+    if(!voucherOverlay.classList.contains("applicable")) return;
+    voucherOverlay.classList.remove("show");
+    voucherOverlay.setAttribute("aria-hidden", "true");
+    document.documentElement.style.overflow = "";
+    voucherTimer = window.setTimeout(function(){
+      voucherOverlay.classList.remove("applicable");
+      voucherTimer = null;
+    }, 350);
+  }
+
+  giftBtn.addEventListener("click", openVoucher);
+  voucherClose.addEventListener("click", closeVoucher);
+  voucherOverlay.addEventListener("click", function(e){
+    if(e.target === voucherOverlay) closeVoucher();
+  });
+  document.addEventListener("keydown", function(e){
+    if(e.key === "Escape") closeVoucher();
   });
 
   koalaWrap.addEventListener("click", function(){
