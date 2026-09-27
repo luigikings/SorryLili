@@ -631,11 +631,11 @@
     70%{ box-shadow:0 6px 14px rgba(109,47,82,.22), 0 0 16px 4px rgba(201,162,74,.45); }
   }
 
-  /* ---------- lily petals falling when the letter opens ---------- */
+  /* ---------- lily petals falling behind the page once the letter opens ---------- */
   .petal-rain{
     position:fixed;
     inset:0;
-    z-index:150;
+    z-index:-1;
     pointer-events:none;
     overflow:hidden;
   }
@@ -644,9 +644,9 @@
     top:-30px;
     border-radius:50% 50% 50% 50% / 65% 65% 35% 35%;
     opacity:.9;
-    animation: petalFall linear forwards;
+    animation: petalRainFall linear forwards;
   }
-  @keyframes petalFall{
+  @keyframes petalRainFall{
     0%{ transform:translate(0, 0) rotate(0); }
     25%{ transform:translate(var(--sway), 27vh) rotate(calc(var(--rot) * .25)); }
     50%{ transform:translate(calc(var(--sway) * -1), 55vh) rotate(calc(var(--rot) * .5)); }
@@ -1874,7 +1874,7 @@
 <script>
 (function(){
   // bump this together with version.json on every content update
-  var CURRENT_VERSION = 34;
+  var CURRENT_VERSION = 35;
 
   fetch('version.json?_=' + Date.now(), { cache: 'no-store' })
     .then(function(res){ return res.ok ? res.json() : null; })
@@ -2450,6 +2450,7 @@
       }else{
         sorryBox.classList.remove("show", "applicable");
         closeVoucher();
+        stopPetals();
       }
     });
   });
@@ -2465,27 +2466,33 @@
     "linear-gradient(160deg, #fff6ee, #f3dfe8)"
   ];
 
-  function rainPetals(){
-    if(reduceMotion) return;
-    for(var i = 0; i < 30; i++){
-      (function(delay){
-        window.setTimeout(function(){
-          var el = document.createElement("span");
-          el.className = "petal";
-          var w = 8 + Math.random() * 6;
-          el.style.width = w.toFixed(1) + "px";
-          el.style.height = (w * 1.7).toFixed(1) + "px";
-          el.style.left = (Math.random() * 100).toFixed(1) + "%";
-          el.style.background = PETAL_COLORS[Math.floor(Math.random() * PETAL_COLORS.length)];
-          el.style.setProperty("--sway", Math.round(15 + Math.random() * 30) + "px");
-          el.style.setProperty("--rot", Math.round((Math.random() < .5 ? -1 : 1) * (180 + Math.random() * 360)) + "deg");
-          var dur = 4 + Math.random() * 2.5;
-          el.style.animationDuration = dur.toFixed(2) + "s";
-          petalRain.appendChild(el);
-          window.setTimeout(function(){ el.remove(); }, dur * 1000 + 100);
-        }, delay);
-      })(Math.random() * 2600);
-    }
+  var petalTimer = null;
+
+  function spawnPetal(){
+    var el = document.createElement("span");
+    el.className = "petal";
+    var w = 8 + Math.random() * 6;
+    el.style.width = w.toFixed(1) + "px";
+    el.style.height = (w * 1.7).toFixed(1) + "px";
+    el.style.left = (Math.random() * 100).toFixed(1) + "%";
+    el.style.background = PETAL_COLORS[Math.floor(Math.random() * PETAL_COLORS.length)];
+    el.style.setProperty("--sway", Math.round(15 + Math.random() * 30) + "px");
+    el.style.setProperty("--rot", Math.round((Math.random() < .5 ? -1 : 1) * (180 + Math.random() * 360)) + "deg");
+    var dur = 6 + Math.random() * 4;
+    el.style.animationDuration = dur.toFixed(2) + "s";
+    petalRain.appendChild(el);
+    window.setTimeout(function(){ el.remove(); }, dur * 1000 + 100);
+  }
+
+  // petals keep falling behind the page while the sorry mood is open
+  function startPetals(){
+    if(reduceMotion || petalTimer) return;
+    for(var i = 0; i < 14; i++) window.setTimeout(spawnPetal, Math.random() * 1500);
+    petalTimer = window.setInterval(spawnPetal, 260);
+  }
+
+  function stopPetals(){
+    if(petalTimer){ window.clearInterval(petalTimer); petalTimer = null; }
   }
 
   var faceSorry = document.querySelector(".face-sorry");
@@ -2493,6 +2500,7 @@
   function resetEnvelope(){
     closeVoucher();
     faceSorry.classList.remove("glad");
+    stopPetals();
     if(letterTimer){ window.clearTimeout(letterTimer); letterTimer = null; }
     envelope.classList.remove("open");
     envelopeWrap.classList.remove("gone");
@@ -2506,7 +2514,11 @@
     letterTimer = window.setTimeout(function(){
       envelopeWrap.classList.add("gone");
       letter.classList.add("show");
-      rainPetals();
+      startPetals();
+      faceSorry.classList.add("glad");
+      koalaWrap.classList.remove("pop");
+      void koalaWrap.offsetWidth;
+      koalaWrap.classList.add("pop");
     }, reduceMotion ? 0 : 1300);
   });
 
