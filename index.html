@@ -249,7 +249,7 @@
     opacity:1;
     margin-top:22px;
   }
-  .koala-scene.revealed.tall{ max-height:2600px; }
+  .koala-scene.revealed.tall{ max-height:6000px; }
 
   .koala-scene.leaving{
     max-height:0;
@@ -1434,6 +1434,9 @@
             <p data-i18n="letterP3"></p>
             <p data-i18n="letterP4"></p>
             <p data-i18n="letterP5"></p>
+            <p data-i18n="letterP6"></p>
+            <p data-i18n="letterP7"></p>
+            <p data-i18n="letterP8"></p>
             <p class="letter-sign" data-i18n="letterSign"></p>
           </div>
         </div>
@@ -1566,7 +1569,7 @@
 <script>
 (function(){
   // bump this together with version.json on every content update
-  var CURRENT_VERSION = 26;
+  var CURRENT_VERSION = 27;
 
   fetch('version.json?_=' + Date.now(), { cache: 'no-store' })
     .then(function(res){ return res.ok ? res.json() : null; })
@@ -1607,10 +1610,13 @@
       openMe: "Ábreme 💌",
       letterGreeting: "Mi Koala,",
       letterP1: "No sabes lo importante que eres para mí.",
-      letterP2: "No sabes el apoyo que he recibido de ti, más que de cualquier persona que tengo aquí conmigo en Holanda. Por eso te aprecio tanto y te quiero tanto.",
-      letterP3: "Incluso en las situaciones raras en las que a veces nos encontramos, yo siempre he sabido buscarte a ti. Siempre he ido a buscar tu sonrisa.",
-      letterP4: "Y sé lo tonto que puede sonar esto, pero no sabes lo estúpidamente bonito, lo estúpidamente feliz que me hace, y cómo me llena el día, simplemente una sonrisa tuya hacia mí.",
-      letterP5: "Gracias por estar, por apoyarme y por quererme. Te quiero muchísimo.",
+      letterP2: "Soy muy malo expresándome, por eso incluso me gusta escribir cartas. Y te escribo esta para que sepas un poco de lo que pienso de ti.",
+      letterP3: "Desde que llegué a Holanda he tenido mucho estrés. Por mucho dinero que estuviera ganando, he tenido estrés: porque me echaron del primer trabajo, por el estilo de trabajo del Five Guys, por el tema de la deuda… Mucho estrés, ¿sabes? Y aunque aquí he estado con mi primo, y mi primo me ha sabido ayudar, la persona que más me ha apoyado, de lejos, has sido tú. Y eso yo lo sé ver, y lo sé apreciar.",
+      letterP4: "Por eso, cuando digo que algo que me llena muchísimo la felicidad y el día a día es tu sonrisa, no lo digo en broma, ni por labia, ni por decir. Lo digo de verdad, muy en serio.",
+      letterP5: "Cuando trabajaba en el Five Guys me podían poner en la plancha con resaca y todo, pero valía cada maldito segundo solo por verte ahí en caja, hablando con los clientes, y nosotros diciendo estupideces solo para que te rieras. Solo para verte sonreír. Qué ridículo, no sé por qué, pero me llenaba estúpidamente. Cualquier otra cosa no, pero eso sí. Eso me llenaba muchísimo.",
+      letterP6: "Por eso en la carta de tu cumpleaños te escribí que nunca permitas que nadie te quite tu sonrisa. Y si algo me gusta, es intentar ser siempre el motivo de ella. Aunque suene un poco egocéntrico.",
+      letterP7: "Y de verdad, gracias por todo lo que haces por mí. Por todo el amor, por todo el cariño, incluso en esta situación rara en la que estamos. Te lo agradezco un montón. Porque no es solo tu sonrisa: es cómo me apoyas, cómo me quieres, cómo te has mostrado conmigo, incluso con tus amigos, que ahora todo el mundo dice «mamá huevo». Todo eso son cosas de las que yo me doy cuenta.",
+      letterP8: "Y aunque a lo mejor no te lo diga, o me equivoque y diga estupideces, esto lo pienso de verdad de ti: eres una persona maravillosa. No sabes lo feliz y agradecido que estoy de haberte conocido. Y sé que contigo aprenderé muchas cosas.",
       letterSign: "Tu Zebra 🦓",
       ourSong: "Nuestra Canción",
       songGitano: "Gitano",
@@ -1660,10 +1666,13 @@
       openMe: "Open me 💌",
       letterGreeting: "My Koala,",
       letterP1: "You have no idea how important you are to me.",
-      letterP2: "You have no idea how much support I've gotten from you, more than from anyone I have here with me in the Netherlands. That's why I appreciate you so much and love you so much.",
-      letterP3: "Even in the strange situations we sometimes find ourselves in, I've always known to look for you. I've always gone looking for your smile.",
-      letterP4: "And I know how silly this might sound, but you have no idea how stupidly beautiful, how stupidly happy it makes me, and how it fills my whole day, just one smile from you to me.",
-      letterP5: "Thank you for being here, for supporting me and for loving me. I love you so much.",
+      letterP2: "I'm really bad at expressing myself, that's why I actually like writing letters. And I'm writing you this one so you know a little of what I think about you.",
+      letterP3: "Since I got to the Netherlands I've been under a lot of stress. No matter how much money I was making, I was stressed: because I got fired from my first job, because of the way work is at Five Guys, because of the debt… So much stress, you know? And even though I've been here with my cousin, and he has really helped me, the person who has supported me the most, by far, has been you. And I can see that, and I truly appreciate it.",
+      letterP4: "That's why, when I say that something that fills my happiness and my everyday life so much is your smile, I'm not saying it as a joke, or as a smooth line, or just to say it. I really mean it, completely seriously.",
+      letterP5: "When I was working at Five Guys they could put me on the grill hungover and all, but every damn second was worth it just to see you there at the register, talking to the customers, and us saying stupid things just to make you laugh. Just to see you smile. How ridiculous, I don't know why, but it filled me up so stupidly. Nothing else did, but that did. That filled me up so much.",
+      letterP6: "That's why in your birthday letter I wrote that you should never let anyone take your smile away. And if there's something I love, it's trying to always be the reason for it. Even if that sounds a bit self-centered.",
+      letterP7: "And really, thank you for everything you do for me. For all the love, for all the affection, even in this strange situation we're in. I'm so grateful for it. Because it's not just your smile: it's how you support me, how you love me, how you've shown yourself with me, even with your friends, now everyone says “mamá huevo”. All of those are things I notice.",
+      letterP8: "And even if maybe I don't say it, or I get things wrong and say stupid things, this is what I truly think of you: you are a wonderful person. You have no idea how happy and grateful I am to have met you. And I know that with you I'll learn so many things.",
       letterSign: "Your Zebra 🦓",
       ourSong: "Our Song",
       songGitano: "Gitano",
@@ -1713,10 +1722,13 @@
       openMe: "Nyiss ki 💌",
       letterGreeting: "Koalám,",
       letterP1: "El sem tudod képzelni, mennyire fontos vagy nekem.",
-      letterP2: "El sem tudod képzelni, mennyi támogatást kaptam tőled, többet, mint bárkitől, aki itt van velem Hollandiában. Ezért becsüllek ennyire, és ezért szeretlek ennyire.",
-      letterP3: "Még azokban a furcsa helyzetekben is, amelyekbe néha kerülünk, mindig téged kerestelek. Mindig a mosolyodat kerestem.",
-      letterP4: "És tudom, milyen butának hangozhat ez, de el sem tudod képzelni, milyen hülyén szép, milyen hülyén boldoggá tesz, és hogyan tölti meg az egész napomat egyetlen mosolyod, amit nekem küldesz.",
-      letterP5: "Köszönöm, hogy itt vagy nekem, hogy támogatsz és hogy szeretsz. Nagyon szeretlek.",
+      letterP2: "Nagyon rosszul fejezem ki magam, ezért is szeretek leveleket írni. Ezt azért írom neked, hogy tudd egy kicsit, mit gondolok rólad.",
+      letterP3: "Amióta Hollandiába jöttem, nagyon sok stressz ért. Hiába kerestem sok pénzt, mégis stresszes voltam: mert kirúgtak az első munkahelyemről, a Five Guys-os munka miatt, az adósság miatt… Nagyon sok stressz, tudod? És bár itt voltam az unokatestvéremmel, és ő sokat segített, messze te voltál az, aki a legjobban támogatott. És ezt én látom, és nagyon értékelem.",
+      letterP4: "Ezért amikor azt mondom, hogy a mosolyod az egyik dolog, ami a legjobban feltölti a boldogságomat és a mindennapjaimat, azt nem viccből mondom, nem dumából, és nem csak úgy. Tényleg komolyan gondolom.",
+      letterP5: "Amikor a Five Guysban dolgoztam, akár másnaposan is betehettek a grillhez, de minden átkozott másodpercet megért, csak hogy lássalak ott a kasszánál, ahogy a vendégekkel beszélgetsz, mi meg hülyeségeket mondtunk, csak hogy nevess. Csak hogy lássalak mosolyogni. Milyen nevetséges, nem tudom, miért, de hülyén boldoggá tett. Semmi más nem, de az igen. Az nagyon feltöltött.",
+      letterP6: "Ezért írtam a születésnapi leveledben, hogy soha ne engedd, hogy bárki elvegye a mosolyodat. És ha valamit szeretek, az az, hogy megpróbáljak mindig én lenni a mosolyod oka. Még ha ez kicsit egocentrikusan is hangzik.",
+      letterP7: "És tényleg, köszönök mindent, amit értem teszel. Minden szeretetet, minden gyengédséget, még ebben a fura helyzetben is, amiben vagyunk. Nagyon hálás vagyok érte. Mert nem csak a mosolyodról van szó: hanem arról, ahogy támogatsz, ahogy szeretsz, ahogy megmutattad magad velem, még a barátaid előtt is, most már mindenki azt mondja, hogy „mamá huevo”. Ezeket mind észreveszem.",
+      letterP8: "És bár lehet, hogy nem mondom ki, vagy tévedek és hülyeségeket mondok, ezt tényleg így gondolom rólad: csodálatos ember vagy. El sem tudod képzelni, mennyire boldog és hálás vagyok, hogy megismertelek. És tudom, hogy veled sok mindent meg fogok tanulni.",
       letterSign: "A Zebrád 🦓",
       ourSong: "A mi dalunk",
       songGitano: "Gitano",
