@@ -6,7 +6,7 @@
 <title>Koala</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,500&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,500&family=Jost:wght@300;400;500;600&family=Caveat:wght@500;600&display=swap" rel="stylesheet">
 <style>
   :root{
     --bg-1:#faf3e7;
@@ -210,6 +210,28 @@
     transform:scale(1.1);
   }
 
+  /* special one-off mood: gradient ring + soft pulsing glow so it stands out */
+  .mood-btn.mood-special,
+  .mood-btn.mood-special.selected{
+    position:relative;
+    border:2.5px solid transparent;
+    background:
+      linear-gradient(#fffaf3, #fffaf3) padding-box,
+      linear-gradient(135deg, var(--gold), var(--rose), var(--berenjena)) border-box;
+    animation: specialGlow 1.9s ease-in-out infinite;
+  }
+  .mood-btn.mood-special::after{
+    content:"✨";
+    position:absolute;
+    top:-7px;
+    right:-5px;
+    font-size:.8rem;
+  }
+  @keyframes specialGlow{
+    0%, 100%{ box-shadow:0 0 0 0 rgba(201,116,154,.45), 0 0 10px rgba(201,162,74,.25); }
+    50%{ box-shadow:0 0 0 7px rgba(201,116,154,0), 0 0 18px rgba(201,162,74,.55); }
+  }
+
   /* ---------- koala scene ---------- */
   .koala-scene{
     width:100%;
@@ -227,6 +249,7 @@
     opacity:1;
     margin-top:22px;
   }
+  .koala-scene.revealed.tall{ max-height:2600px; }
 
   .koala-scene.leaving{
     max-height:0;
@@ -363,6 +386,170 @@
     100%{ transform:translateY(-22px) rotate(8deg); opacity:0; }
   }
   .face-musical .note{ animation: floatNote 2.4s ease-in-out infinite; }
+
+  .face-sorry .bouquet{
+    transform-box: view-box;
+    transform-origin: 0 0;
+    animation: bouquetSway 3.2s ease-in-out infinite;
+  }
+  @keyframes bouquetSway{
+    0%, 100%{ transform:rotate(-3deg); }
+    50%{ transform:rotate(3deg); }
+  }
+
+  /* ---------- sorry box: message + envelope + letter ---------- */
+  .sorry-box{
+    display:none;
+    width:100%;
+    flex-direction:column;
+    align-items:center;
+    margin-top:18px;
+    opacity:0;
+    transform:translateY(8px);
+    transition: opacity .5s ease, transform .5s ease;
+  }
+  .sorry-box.applicable{ display:flex; }
+  .sorry-box.show{ opacity:1; transform:translateY(0); }
+
+  .sorry-msg{
+    font-family:'Cormorant Garamond', serif;
+    font-weight:500;
+    font-size:clamp(1.05rem, 4.3vw, 1.25rem);
+    line-height:1.55;
+    color:var(--berenjena);
+    max-width:30ch;
+    margin:0 0 6px;
+  }
+
+  .envelope-wrap{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    padding-top:72px;
+    max-height:300px;
+    overflow:visible;
+    transition: max-height .6s ease, opacity .5s ease, margin .5s ease;
+  }
+  .envelope-wrap.gone{
+    max-height:0;
+    opacity:0;
+    margin:0;
+    padding-top:0;
+    pointer-events:none;
+  }
+
+  .envelope{
+    position:relative;
+    width:170px;
+    height:112px;
+    padding:0;
+    border:none;
+    background:none;
+    cursor:pointer;
+    perspective:600px;
+    -webkit-tap-highlight-color: transparent;
+    filter: drop-shadow(0 10px 16px rgba(109,47,82,.2));
+    animation: envelopeNudge 2.6s ease-in-out infinite;
+  }
+  @keyframes envelopeNudge{
+    0%, 70%, 100%{ transform:rotate(0) scale(1); }
+    76%{ transform:rotate(-4deg) scale(1.04); }
+    82%{ transform:rotate(4deg) scale(1.04); }
+    88%{ transform:rotate(-2deg) scale(1.02); }
+  }
+  .envelope.open{ animation:none; }
+
+  .envelope span{ position:absolute; display:block; }
+  .env-back{
+    inset:0;
+    background:#f0cfdc;
+    border-radius:6px;
+  }
+  .env-letter{
+    left:10px; right:10px; top:10px; bottom:6px;
+    background:#fffaf3;
+    border-radius:4px;
+    transition: transform .6s ease .45s;
+    z-index:1;
+  }
+  .env-front{
+    inset:0;
+    background:#f7dfe8;
+    border-radius:6px;
+    clip-path: polygon(0 32%, 50% 68%, 100% 32%, 100% 100%, 0 100%);
+    z-index:2;
+  }
+  .env-flap{
+    left:0; right:0; top:0;
+    height:70%;
+    background:#e9bccd;
+    border-radius:6px 6px 0 0;
+    clip-path: polygon(0 0, 100% 0, 50% 100%);
+    transform-origin: top center;
+    transition: transform .6s ease, z-index 0s linear .3s;
+    z-index:3;
+  }
+  .env-seal{
+    left:50%;
+    top:52%;
+    transform:translate(-50%,-50%);
+    font-size:20px;
+    color:#c0245a;
+    z-index:4;
+    transition: opacity .3s ease;
+  }
+  .envelope.open .env-flap{ transform:rotateX(180deg); z-index:0; }
+  .envelope.open .env-seal{ opacity:0; }
+  .envelope.open .env-letter{ transform:translateY(-44px); }
+
+  .envelope-hint{
+    font-family:'Jost', sans-serif;
+    font-size:.85rem;
+    color:var(--berenjena);
+    margin:14px 0 0;
+    animation: hintPulse 1.8s ease-in-out infinite;
+  }
+  @keyframes hintPulse{
+    0%, 100%{ opacity:.55; }
+    50%{ opacity:1; }
+  }
+
+  .letter{
+    display:none;
+    width:100%;
+    max-width:340px;
+    transform-origin: top center;
+  }
+  .letter.show{
+    display:block;
+    animation: letterUnfold .8s cubic-bezier(.25,1.2,.4,1) forwards;
+  }
+  @keyframes letterUnfold{
+    0%{ opacity:0; transform:scaleY(.15) translateY(-20px); }
+    60%{ opacity:1; }
+    100%{ opacity:1; transform:scaleY(1) translateY(0); }
+  }
+  .letter-paper{
+    text-align:left;
+    background:
+      repeating-linear-gradient(to bottom, transparent 0, transparent 31px, rgba(201,116,154,.18) 31px, rgba(201,116,154,.18) 32px),
+      #fffaf3;
+    border-radius:8px;
+    padding:22px 22px 18px;
+    box-shadow: 0 14px 30px rgba(109,47,82,.16), inset 0 0 0 1px rgba(201,116,154,.18);
+    font-family:'Caveat', cursive;
+    font-size:1.35rem;
+    line-height:32px;
+    color:#4a3540;
+  }
+  .letter-paper p{ margin:0 0 10px; }
+  .letter-greeting{ font-weight:600; color:var(--berenjena); }
+  .letter-sign{
+    text-align:right;
+    font-weight:600;
+    color:var(--berenjena);
+    margin-top:14px !important;
+  }
 
   /* ---------- response ---------- */
   .response{
@@ -888,6 +1075,12 @@
     .face-bored .bored-dots,
     .face-desire .flame,
     .face-musical .note{ animation:none; opacity:1; }
+    .mood-btn.mood-special,
+    .face-sorry .bouquet,
+    .envelope,
+    .envelope-hint{ animation:none; }
+    .env-flap, .env-letter, .envelope-wrap{ transition:none; }
+    .letter.show{ animation:none; opacity:1; }
     .bg-fx{ display:none !important; }
     .lily-scene .lily-plant{ animation:none; }
     .petal-bloom{ transform:scale(1); opacity:1; }
@@ -951,6 +1144,7 @@
       <p class="subtext" id="subtext" data-i18n="idle"></p>
 
       <div class="mood-options">
+        <button type="button" class="mood-btn mood-special" data-mood="sorry">🐨</button>
         <button type="button" class="mood-btn" data-mood="sad">😢</button>
         <button type="button" class="mood-btn" data-mood="happy">😊</button>
         <button type="button" class="mood-btn" data-mood="angry">😠</button>
@@ -1115,6 +1309,62 @@
               </g>
             </g>
 
+            <g class="koala-face face-sorry" data-mood="sorry">
+              <path d="M108,108 L131,101" fill="none" stroke="#3d3638" stroke-width="3" stroke-linecap="round"/>
+              <path d="M192,108 L169,101" fill="none" stroke="#3d3638" stroke-width="3" stroke-linecap="round"/>
+              <ellipse cx="120" cy="122" rx="8" ry="10" fill="#3d3638"/>
+              <ellipse cx="180" cy="122" rx="8" ry="10" fill="#3d3638"/>
+              <circle cx="123" cy="118" r="2.8" fill="#fff"/>
+              <circle cx="183" cy="118" r="2.8" fill="#fff"/>
+              <circle cx="117" cy="126" r="1.3" fill="#fff" opacity=".8"/>
+              <circle cx="177" cy="126" r="1.3" fill="#fff" opacity=".8"/>
+              <path d="M141,181 Q150,186 159,181" fill="none" stroke="#3d3638" stroke-width="3" stroke-linecap="round"/>
+              <ellipse cx="94" cy="182" rx="16" ry="10" fill="var(--koala-blush)" opacity=".45"/>
+              <ellipse cx="206" cy="182" rx="16" ry="10" fill="var(--koala-blush)" opacity=".45"/>
+
+              <g transform="translate(150,314) scale(1.38)">
+                <g class="bouquet">
+                  <path d="M-3,-22 L-24,-58 M0,-22 L0,-70 M3,-22 L24,-58" stroke="var(--sage-dark)" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+                  <ellipse cx="-13" cy="-38" rx="4" ry="10" fill="var(--sage)" transform="rotate(-35 -13 -38)"/>
+                  <ellipse cx="13" cy="-38" rx="4" ry="10" fill="var(--sage)" transform="rotate(35 13 -38)"/>
+
+                  <g transform="translate(-24,-62) rotate(-14)">
+                    <ellipse cx="0" cy="-8" rx="4.6" ry="9" fill="#e9a3c0" stroke="#b85c86" stroke-width=".8"/>
+                    <ellipse cx="0" cy="-8" rx="4.6" ry="9" fill="#e9a3c0" stroke="#b85c86" stroke-width=".8" transform="rotate(72)"/>
+                    <ellipse cx="0" cy="-8" rx="4.6" ry="9" fill="#e9a3c0" stroke="#b85c86" stroke-width=".8" transform="rotate(144)"/>
+                    <ellipse cx="0" cy="-8" rx="4.6" ry="9" fill="#e9a3c0" stroke="#b85c86" stroke-width=".8" transform="rotate(216)"/>
+                    <ellipse cx="0" cy="-8" rx="4.6" ry="9" fill="#e9a3c0" stroke="#b85c86" stroke-width=".8" transform="rotate(288)"/>
+                    <circle r="3.2" fill="#fdf3ec"/><circle r="1.6" fill="var(--gold)"/>
+                  </g>
+                  <g transform="translate(24,-62) rotate(14)">
+                    <ellipse cx="0" cy="-8" rx="4.6" ry="9" fill="#c9b8ea" stroke="#6f5fa3" stroke-width=".8"/>
+                    <ellipse cx="0" cy="-8" rx="4.6" ry="9" fill="#c9b8ea" stroke="#6f5fa3" stroke-width=".8" transform="rotate(72)"/>
+                    <ellipse cx="0" cy="-8" rx="4.6" ry="9" fill="#c9b8ea" stroke="#6f5fa3" stroke-width=".8" transform="rotate(144)"/>
+                    <ellipse cx="0" cy="-8" rx="4.6" ry="9" fill="#c9b8ea" stroke="#6f5fa3" stroke-width=".8" transform="rotate(216)"/>
+                    <ellipse cx="0" cy="-8" rx="4.6" ry="9" fill="#c9b8ea" stroke="#6f5fa3" stroke-width=".8" transform="rotate(288)"/>
+                    <circle r="3.2" fill="#fdf3ec"/><circle r="1.6" fill="var(--gold)"/>
+                  </g>
+                  <g transform="translate(0,-74)">
+                    <ellipse cx="0" cy="-9" rx="5.2" ry="10" fill="#d688a8" stroke="#7d3258" stroke-width=".8"/>
+                    <ellipse cx="0" cy="-9" rx="5.2" ry="10" fill="#d688a8" stroke="#7d3258" stroke-width=".8" transform="rotate(72)"/>
+                    <ellipse cx="0" cy="-9" rx="5.2" ry="10" fill="#d688a8" stroke="#7d3258" stroke-width=".8" transform="rotate(144)"/>
+                    <ellipse cx="0" cy="-9" rx="5.2" ry="10" fill="#d688a8" stroke="#7d3258" stroke-width=".8" transform="rotate(216)"/>
+                    <ellipse cx="0" cy="-9" rx="5.2" ry="10" fill="#d688a8" stroke="#7d3258" stroke-width=".8" transform="rotate(288)"/>
+                    <circle r="3.6" fill="#fdf3ec"/><circle r="1.8" fill="var(--gold)"/>
+                  </g>
+
+                  <path d="M-24,-30 L24,-30 L7,12 L-7,12 Z" fill="#fbeee2" stroke="#e2cbb9" stroke-width="1.2" stroke-linejoin="round"/>
+                  <path d="M-16,-30 L-5,10 M16,-30 L5,10" stroke="#eddccc" stroke-width="1"/>
+                  <ellipse cx="-7" cy="-4" rx="7" ry="4" fill="var(--rose)" transform="rotate(-20 -7 -4)"/>
+                  <ellipse cx="7" cy="-4" rx="7" ry="4" fill="var(--rose)" transform="rotate(20 7 -4)"/>
+                  <circle cx="0" cy="-4" r="3" fill="var(--berenjena)"/>
+
+                  <ellipse cx="-22" cy="-12" rx="11" ry="8" fill="var(--koala-body-dark)"/>
+                  <ellipse cx="22" cy="-12" rx="11" ry="8" fill="var(--koala-body-dark)"/>
+                </g>
+              </g>
+            </g>
+
             <g class="koala-face face-musical" data-mood="musical">
               <rect x="103" y="107" width="35" height="23" rx="9" fill="#2b2b2e"/>
               <rect x="162" y="107" width="35" height="23" rx="9" fill="#2b2b2e"/>
@@ -1160,6 +1410,33 @@
           <button type="button" class="song-btn" data-song="behappy" data-i18n="songFavorite"></button>
         </div>
         <audio id="songAudio" src="Musica/gitano.mp3" preload="none"></audio>
+      </div>
+
+      <div class="sorry-box" id="sorryBox">
+        <p class="sorry-msg" data-i18n="sorryMsg"></p>
+
+        <div class="envelope-wrap" id="envelopeWrap">
+          <button type="button" class="envelope" id="envelope" aria-label="💌">
+            <span class="env-back"></span>
+            <span class="env-letter"></span>
+            <span class="env-front"></span>
+            <span class="env-flap"></span>
+            <span class="env-seal">❤</span>
+          </button>
+          <p class="envelope-hint" data-i18n="openMe"></p>
+        </div>
+
+        <div class="letter" id="letter">
+          <div class="letter-paper">
+            <p class="letter-greeting" data-i18n="letterGreeting"></p>
+            <p data-i18n="letterP1"></p>
+            <p data-i18n="letterP2"></p>
+            <p data-i18n="letterP3"></p>
+            <p data-i18n="letterP4"></p>
+            <p data-i18n="letterP5"></p>
+            <p class="letter-sign" data-i18n="letterSign"></p>
+          </div>
+        </div>
       </div>
 
       <div class="angry-box" id="angryBox">
@@ -1289,7 +1566,7 @@
 <script>
 (function(){
   // bump this together with version.json on every content update
-  var CURRENT_VERSION = 25;
+  var CURRENT_VERSION = 26;
 
   fetch('version.json?_=' + Date.now(), { cache: 'no-store' })
     .then(function(res){ return res.ok ? res.json() : null; })
@@ -1326,6 +1603,15 @@
       waSleepyLabel: "Mandar buenas noches",
       waLovedLabel: "Enviar Amor",
       musical: "Presiona el koala para que cante o pare de cantar",
+      sorryMsg: "Lo siento mucho. Estoy aprendiendo, y quiero seguir aprendiendo: de nosotros y de ti. Porque me importas, porque me apoyas y porque me quieres, y yo lo valoro muchísimo. Sé que dije muchas estupideces… así que, a cambio, déjame decirte unas cosas bonitas 💌",
+      openMe: "Ábreme 💌",
+      letterGreeting: "Mi Koala,",
+      letterP1: "No sabes lo importante que eres para mí.",
+      letterP2: "No sabes el apoyo que he recibido de ti, más que de cualquier persona que tengo aquí conmigo en Holanda. Por eso te aprecio tanto y te quiero tanto.",
+      letterP3: "Incluso en las situaciones raras en las que a veces nos encontramos, yo siempre he sabido buscarte a ti. Siempre he ido a buscar tu sonrisa.",
+      letterP4: "Y sé lo tonto que puede sonar esto, pero no sabes lo estúpidamente bonito, lo estúpidamente feliz que me hace, y cómo me llena el día, simplemente una sonrisa tuya hacia mí.",
+      letterP5: "Gracias por estar, por apoyarme y por quererme. Te quiero muchísimo.",
+      letterSign: "Tu Zebra 🦓",
       ourSong: "Nuestra Canción",
       songGitano: "Gitano",
       songFavorite: "Tu Canción Favorita",
@@ -1370,6 +1656,15 @@
       waSleepyLabel: "Send goodnight",
       waLovedLabel: "Send Love",
       musical: "Press the koala to make it sing or stop singing",
+      sorryMsg: "I'm so sorry. I'm learning, and I want to keep learning: about us and about you. Because you matter to me, because you support me and because you love me, and I value that so much. I know I said a lot of stupid things… so in return, let me tell you some beautiful ones 💌",
+      openMe: "Open me 💌",
+      letterGreeting: "My Koala,",
+      letterP1: "You have no idea how important you are to me.",
+      letterP2: "You have no idea how much support I've gotten from you, more than from anyone I have here with me in the Netherlands. That's why I appreciate you so much and love you so much.",
+      letterP3: "Even in the strange situations we sometimes find ourselves in, I've always known to look for you. I've always gone looking for your smile.",
+      letterP4: "And I know how silly this might sound, but you have no idea how stupidly beautiful, how stupidly happy it makes me, and how it fills my whole day, just one smile from you to me.",
+      letterP5: "Thank you for being here, for supporting me and for loving me. I love you so much.",
+      letterSign: "Your Zebra 🦓",
       ourSong: "Our Song",
       songGitano: "Gitano",
       songFavorite: "Your Favorite Song",
@@ -1414,6 +1709,15 @@
       waSleepyLabel: "Jó éjt küldeni",
       waLovedLabel: "Szeretet küldése",
       musical: "Nyomd meg a koalát, hogy énekeljen vagy abbahagyja",
+      sorryMsg: "Nagyon sajnálom. Tanulok, és szeretnék tovább tanulni: rólunk és rólad. Mert fontos vagy nekem, mert támogatsz és mert szeretsz, és ezt nagyon értékelem. Tudom, hogy sok butaságot mondtam… ezért cserébe hadd mondjak neked néhány szép dolgot 💌",
+      openMe: "Nyiss ki 💌",
+      letterGreeting: "Koalám,",
+      letterP1: "El sem tudod képzelni, mennyire fontos vagy nekem.",
+      letterP2: "El sem tudod képzelni, mennyi támogatást kaptam tőled, többet, mint bárkitől, aki itt van velem Hollandiában. Ezért becsüllek ennyire, és ezért szeretlek ennyire.",
+      letterP3: "Még azokban a furcsa helyzetekben is, amelyekbe néha kerülünk, mindig téged kerestelek. Mindig a mosolyodat kerestem.",
+      letterP4: "És tudom, milyen butának hangozhat ez, de el sem tudod képzelni, milyen hülyén szép, milyen hülyén boldoggá tesz, és hogyan tölti meg az egész napomat egyetlen mosolyod, amit nekem küldesz.",
+      letterP5: "Köszönöm, hogy itt vagy nekem, hogy támogatsz és hogy szeretsz. Nagyon szeretlek.",
+      letterSign: "A Zebrád 🦓",
       ourSong: "A mi dalunk",
       songGitano: "Gitano",
       songFavorite: "A kedvenc dalod",
@@ -1456,6 +1760,10 @@
   var playPauseBtn = document.getElementById("playPauseBtn");
   var songProgress = document.getElementById("songProgress");
   var songAudio = document.getElementById("songAudio");
+  var sorryBox = document.getElementById("sorryBox");
+  var envelopeWrap = document.getElementById("envelopeWrap");
+  var envelope = document.getElementById("envelope");
+  var letter = document.getElementById("letter");
   var playerTitle = document.getElementById("playerTitle");
   var songBtns = document.querySelectorAll(".song-btn");
   var bgHearts = document.getElementById("bgHearts");
@@ -1782,7 +2090,7 @@
       });
 
       renderResponse();
-      responseText.classList.toggle("show", mood !== "musical");
+      responseText.classList.toggle("show", mood !== "musical" && mood !== "sorry");
       renderWaButton();
       triggerPop();
 
@@ -1801,7 +2109,36 @@
         if(playerBox.classList.contains("applicable")) stopMusic();
         playerBox.classList.remove("show", "applicable");
       }
+
+      koalaScene.classList.toggle("tall", mood === "sorry");
+      if(mood === "sorry"){
+        resetEnvelope();
+        sorryBox.classList.add("applicable");
+        window.requestAnimationFrame(function(){ sorryBox.classList.add("show"); });
+      }else{
+        sorryBox.classList.remove("show", "applicable");
+      }
     });
+  });
+
+  // ---------- sorry letter ----------
+  var letterTimer = null;
+
+  function resetEnvelope(){
+    if(letterTimer){ window.clearTimeout(letterTimer); letterTimer = null; }
+    envelope.classList.remove("open");
+    envelopeWrap.classList.remove("gone");
+    letter.classList.remove("show");
+  }
+
+  envelope.addEventListener("click", function(){
+    if(envelope.classList.contains("open")) return;
+    envelope.classList.add("open");
+    buzz([20, 40, 20]);
+    letterTimer = window.setTimeout(function(){
+      envelopeWrap.classList.add("gone");
+      letter.classList.add("show");
+    }, reduceMotion ? 0 : 1300);
   });
 
   koalaWrap.addEventListener("click", function(){
