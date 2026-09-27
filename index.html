@@ -392,6 +392,12 @@
     transform-origin: 0 0;
     animation: bouquetSway 3.2s ease-in-out infinite;
   }
+  .face-sorry .sorry-worried, .face-sorry .sorry-glad{ transition: opacity .5s ease; }
+  .face-sorry .sorry-glad{ opacity:0; }
+  .face-sorry.glad .sorry-worried{ opacity:0; }
+  .face-sorry.glad .sorry-glad{ opacity:1; }
+  .face-sorry.glad .glad-heart{ animation: floatHeart 2.2s ease-in-out infinite; }
+  .face-sorry.glad .bouquet{ animation-duration:1.6s; }
   @keyframes bouquetSway{
     0%, 100%{ transform:rotate(-3deg); }
     50%{ transform:rotate(3deg); }
@@ -558,6 +564,13 @@
     margin-top:18px;
   }
   .letter-footer .letter-sign{ margin:0 !important; padding-bottom:4px; }
+  .letter-paper .letter-ps{
+    margin:22px 0 0;
+    font-size:1.2rem;
+    line-height:26px;
+    color:var(--rose);
+    transform:rotate(-1.5deg);
+  }
 
   /* ---------- little gift inside the letter ---------- */
   .gift-btn{
@@ -618,6 +631,29 @@
     70%{ box-shadow:0 6px 14px rgba(109,47,82,.22), 0 0 16px 4px rgba(201,162,74,.45); }
   }
 
+  /* ---------- lily petals falling when the letter opens ---------- */
+  .petal-rain{
+    position:fixed;
+    inset:0;
+    z-index:150;
+    pointer-events:none;
+    overflow:hidden;
+  }
+  .petal{
+    position:absolute;
+    top:-30px;
+    border-radius:50% 50% 50% 50% / 65% 65% 35% 35%;
+    opacity:.9;
+    animation: petalFall linear forwards;
+  }
+  @keyframes petalFall{
+    0%{ transform:translate(0, 0) rotate(0); }
+    25%{ transform:translate(var(--sway), 27vh) rotate(calc(var(--rot) * .25)); }
+    50%{ transform:translate(calc(var(--sway) * -1), 55vh) rotate(calc(var(--rot) * .5)); }
+    75%{ transform:translate(var(--sway), 82vh) rotate(calc(var(--rot) * .75)); opacity:.9; }
+    100%{ transform:translate(0, 112vh) rotate(var(--rot)); opacity:0; }
+  }
+
   /* ---------- massage voucher (full screen) ---------- */
   .voucher-overlay{
     position:fixed;
@@ -655,7 +691,7 @@
   .voucher-ticket{
     position:relative;
     width:100%;
-    padding:26px 22px 22px;
+    padding:30px 22px 22px;
     border-radius:18px;
     background:linear-gradient(160deg, #fffaf3 0%, #fdeef4 100%);
     box-shadow:0 22px 50px rgba(0,0,0,.28);
@@ -669,6 +705,24 @@
     border:2px dashed rgba(201,116,154,.55);
     border-radius:12px;
     pointer-events:none;
+  }
+  .voucher-koala{
+    position:absolute;
+    left:50%;
+    top:-44px;
+    width:86px;
+    margin-left:-43px;
+    transform-origin:50% 100%;
+  }
+  .voucher-overlay.show .voucher-koala{ animation: koalaPeek 1.1s cubic-bezier(.25,1.4,.4,1) .35s both, koalaNod 2.4s ease-in-out 1.5s infinite; }
+  @keyframes koalaPeek{
+    0%{ transform:translateY(40px) scale(.6); opacity:0; }
+    100%{ transform:translateY(0) scale(1); opacity:1; }
+  }
+  @keyframes koalaNod{
+    0%, 100%{ transform:rotate(0); }
+    30%{ transform:rotate(-6deg); }
+    60%{ transform:rotate(6deg); }
   }
   .voucher-kicker{
     margin:0;
@@ -1255,6 +1309,9 @@
 
   @media (prefers-reduced-motion: reduce){
     .gift-card{ animation:none; }
+    .petal-rain{ display:none; }
+    .voucher-overlay.show .voucher-koala{ animation:none; }
+    .face-sorry.glad .glad-heart{ animation:none; }
     .voucher-overlay.show .voucher{ animation:none; transform:none; opacity:1; }
     .voucher-burst{ display:none; }
     .koala-breathe{ animation:none; }
@@ -1507,6 +1564,7 @@
             </g>
 
             <g class="koala-face face-sorry" data-mood="sorry">
+              <g class="sorry-worried">
               <path d="M108,108 L131,101" fill="none" stroke="#3d3638" stroke-width="3" stroke-linecap="round"/>
               <path d="M192,108 L169,101" fill="none" stroke="#3d3638" stroke-width="3" stroke-linecap="round"/>
               <ellipse cx="120" cy="122" rx="8" ry="10" fill="#3d3638"/>
@@ -1516,6 +1574,21 @@
               <circle cx="117" cy="126" r="1.3" fill="#fff" opacity=".8"/>
               <circle cx="177" cy="126" r="1.3" fill="#fff" opacity=".8"/>
               <path d="M141,181 Q150,186 159,181" fill="none" stroke="#3d3638" stroke-width="3" stroke-linecap="round"/>
+              </g>
+              <g class="sorry-glad">
+                <path d="M109,125 Q120,110 131,125" fill="none" stroke="#3d3638" stroke-width="4" stroke-linecap="round"/>
+                <path d="M169,125 Q180,110 191,125" fill="none" stroke="#3d3638" stroke-width="4" stroke-linecap="round"/>
+                <path d="M130,172 Q150,196 170,172" fill="none" stroke="#3d3638" stroke-width="3.5" stroke-linecap="round"/>
+                <g class="glad-heart" style="animation-delay:0s">
+                  <path d="M74,138 C72,134 66,135 66,140 C66,144 71,147 74,151 C77,147 82,144 82,140 C82,135 76,134 74,138 Z" fill="#d94f72"/>
+                </g>
+                <g class="glad-heart" style="animation-delay:.6s">
+                  <path d="M226,128 C224,124 219,125 219,130 C219,134 223,137 226,141 C229,137 233,134 233,130 C233,125 228,124 226,128 Z" fill="#d94f72"/>
+                </g>
+                <g class="glad-heart" style="animation-delay:1.2s">
+                  <path d="M150,52 C148,48 143,49 143,54 C143,58 147,61 150,65 C153,61 157,58 157,54 C157,49 152,48 150,52 Z" fill="#d94f72"/>
+                </g>
+              </g>
               <ellipse cx="94" cy="182" rx="16" ry="10" fill="var(--koala-blush)" opacity=".45"/>
               <ellipse cx="206" cy="182" rx="16" ry="10" fill="var(--koala-blush)" opacity=".45"/>
 
@@ -1647,6 +1720,7 @@
               </button>
               <p class="letter-sign" data-i18n="letterSign"></p>
             </div>
+            <p class="letter-ps" data-i18n="letterPS"></p>
           </div>
         </div>
       </div>
@@ -1775,10 +1849,26 @@
 
   <footer class="credit" data-i18n="credit"></footer>
 
+  <div class="petal-rain" id="petalRain" aria-hidden="true"></div>
+
   <div class="voucher-overlay" id="voucherOverlay" aria-hidden="true">
     <div class="voucher" role="dialog" aria-modal="true">
       <button type="button" class="voucher-close" id="voucherClose" aria-label="Close">×</button>
       <div class="voucher-ticket">
+        <svg class="voucher-koala" viewBox="0 0 90 56" aria-hidden="true">
+          <circle cx="18" cy="20" r="15" fill="var(--koala-body)"/>
+          <circle cx="18" cy="20" r="8" fill="var(--koala-inner-ear)"/>
+          <circle cx="72" cy="20" r="15" fill="var(--koala-body)"/>
+          <circle cx="72" cy="20" r="8" fill="var(--koala-inner-ear)"/>
+          <ellipse cx="45" cy="38" rx="30" ry="27" fill="var(--koala-body)"/>
+          <path d="M31,34 Q36,27 41,34" fill="none" stroke="#3d3638" stroke-width="2.6" stroke-linecap="round"/>
+          <path d="M49,34 Q54,27 59,34" fill="none" stroke="#3d3638" stroke-width="2.6" stroke-linecap="round"/>
+          <ellipse cx="45" cy="43" rx="7" ry="6" fill="var(--koala-nose)"/>
+          <ellipse cx="27" cy="45" rx="6" ry="3.5" fill="var(--koala-blush)" opacity=".6"/>
+          <ellipse cx="63" cy="45" rx="6" ry="3.5" fill="var(--koala-blush)" opacity=".6"/>
+          <ellipse cx="22" cy="54" rx="9" ry="6" fill="var(--koala-body-dark)"/>
+          <ellipse cx="68" cy="54" rx="9" ry="6" fill="var(--koala-body-dark)"/>
+        </svg>
         <p class="voucher-kicker" data-i18n="voucherKicker"></p>
         <div class="voucher-emoji">💆‍♀️</div>
         <h3 class="voucher-title" data-i18n="voucherTitle"></h3>
@@ -1792,7 +1882,7 @@
 <script>
 (function(){
   // bump this together with version.json on every content update
-  var CURRENT_VERSION = 31;
+  var CURRENT_VERSION = 32;
 
   fetch('version.json?_=' + Date.now(), { cache: 'no-store' })
     .then(function(res){ return res.ok ? res.json() : null; })
@@ -1829,7 +1919,7 @@
       waSleepyLabel: "Mandar buenas noches",
       waLovedLabel: "Enviar Amor",
       musical: "Presiona el koala para que cante o pare de cantar",
-      sorryMsg: "Lo siento mucho. Estoy aprendiendo, y quiero seguir aprendiendo: de nosotros y de ti. Porque me importas, porque me apoyas y porque me quieres, y yo lo valoro muchísimo. Sé que dije muchas estupideces… así que, a cambio, déjame decirte unas cosas bonitas 💌",
+      sorryMsg: "Siento los comentarios de hoy. Entiendo totalmente que te incomodaran y que estuvieron muy fuera de lugar, sobre todo con tu amiga ahí. No quiero excusarme, pero déjame darte esta carta con un montón de cosas bonitas que quiero decirte desde hace tiempo 💌",
       openMe: "Ábreme 💌",
       letterGreeting: "Mi Koala,",
       letterP1: "No sabes lo importante que eres para mí.",
@@ -1847,6 +1937,7 @@
       letterP13: "No encuentro más palabras para decirte lo mucho que te aprecio. A lo mejor suena como si hablara de alguien a quien conozco desde hace años, pero en tu caso te lo digo de verdad, y te lo dije hace mucho: la conexión que siento que tenemos tú y yo es muy loca. Y yo soy una persona que aprecia mucho ese tipo de cosas, ese tipo de conexiones, y a la gente. Por eso estoy intentando dejártelo claro aquí. Por si algún día tienes alguna duda: aquí lo tienes.",
       letterP14: "Eres mi motivación, eres mi felicidad, eres mi Koala, eres mi cuchicú. Y de la misma forma que tú eres todo eso para mí, yo estoy intentando dar lo máximo para serlo para ti.",
       letterSign: "Tu Zebra 🦓",
+      letterPS: "P.D.: Incluso aunque hable en Luigi, es sorprendente cómo nos llegamos a entender, jajaja",
       giftHint: "Aquí te dejo un regalito 🎁",
       voucherKicker: "VALE REGALO",
       voucherTitle: "Un masaje gratis lleno de amor",
@@ -1897,7 +1988,7 @@
       waSleepyLabel: "Send goodnight",
       waLovedLabel: "Send Love",
       musical: "Press the koala to make it sing or stop singing",
-      sorryMsg: "I'm so sorry. I'm learning, and I want to keep learning: about us and about you. Because you matter to me, because you support me and because you love me, and I value that so much. I know I said a lot of stupid things… so in return, let me tell you some beautiful ones 💌",
+      sorryMsg: "I'm sorry about my comments today. I completely understand that they made you uncomfortable and that they were really out of place, especially with your friend there. I don't want to make excuses, but let me give you this letter with lots of nice things I've been wanting to tell you for a while 💌",
       openMe: "Open me 💌",
       letterGreeting: "My Koala,",
       letterP1: "You have no idea how important you are to me.",
@@ -1915,6 +2006,7 @@
       letterP13: "I can't find any more words to tell you how much I appreciate you. Maybe it sounds like I'm talking about someone I've known for years, but with you I really mean it, and I told you a long time ago: the connection I feel we have is crazy. And I'm someone who really values that kind of thing, that kind of connection, and people. That's why I'm trying to make it clear here. So if one day you ever have any doubt: here it is.",
       letterP14: "You're my motivation, you're my happiness, you're my Koala, you're my cuchicú. And in the same way that you are all of that for me, I'm trying my very best to be that for you.",
       letterSign: "Your Zebra 🦓",
+      letterPS: "P.S. Even though I speak in “Luigi”, it's amazing how well we manage to understand each other, hahaha",
       giftHint: "Here's a little gift for you 🎁",
       voucherKicker: "GIFT VOUCHER",
       voucherTitle: "A free massage full of love",
@@ -1965,7 +2057,7 @@
       waSleepyLabel: "Jó éjt küldeni",
       waLovedLabel: "Szeretet küldése",
       musical: "Nyomd meg a koalát, hogy énekeljen vagy abbahagyja",
-      sorryMsg: "Nagyon sajnálom. Tanulok, és szeretnék tovább tanulni: rólunk és rólad. Mert fontos vagy nekem, mert támogatsz és mert szeretsz, és ezt nagyon értékelem. Tudom, hogy sok butaságot mondtam… ezért cserébe hadd mondjak neked néhány szép dolgot 💌",
+      sorryMsg: "Sajnálom a mai megjegyzéseimet. Teljesen megértem, hogy kellemetlenül érintettek, és hogy nagyon nem voltak helyénvalók, főleg úgy, hogy a barátnőd is ott volt. Nem akarok magyarázkodni, de hadd adjam oda neked ezt a levelet, tele szép dolgokkal, amiket már egy ideje el akarok mondani neked 💌",
       openMe: "Nyiss ki 💌",
       letterGreeting: "Koalám,",
       letterP1: "El sem tudod képzelni, mennyire fontos vagy nekem.",
@@ -1983,6 +2075,7 @@
       letterP13: "Nem találok több szót arra, hogy elmondjam, mennyire becsüllek. Lehet, hogy úgy hangzik, mintha valakiről beszélnék, akit évek óta ismerek, de nálad tényleg komolyan mondom, és már régen is mondtam: az a kapcsolat, amit köztünk érzek, őrült. És én olyan ember vagyok, aki nagyon értékeli az ilyen dolgokat, az ilyen kapcsolatokat, és az embereket. Ezért próbálom most itt egyértelművé tenni. Ha egyszer bármikor kételkednél: itt van.",
       letterP14: "Te vagy a motivációm, te vagy a boldogságom, te vagy a Koalám, te vagy az én cuchicúm. És ahogy te mindez vagy nekem, én is mindent megteszek, hogy ez lehessek neked.",
       letterSign: "A Zebrád 🦓",
+      letterPS: "U.i.: Még ha „luigiul” beszélek is, meglepő, mennyire megértjük egymást, hahaha",
       giftHint: "Itt hagyok neked egy kis ajándékot 🎁",
       voucherKicker: "AJÁNDÉKUTALVÁNY",
       voucherTitle: "Egy ingyen masszázs, tele szeretettel",
@@ -2396,8 +2489,42 @@
   // ---------- sorry letter ----------
   var letterTimer = null;
 
+  var petalRain = document.getElementById("petalRain");
+  var PETAL_COLORS = [
+    "linear-gradient(160deg, #f6c9dc, #e9a3c0)",
+    "linear-gradient(160deg, #e4d9f5, #c9b8ea)",
+    "linear-gradient(160deg, #eab0c8, #d688a8)",
+    "linear-gradient(160deg, #fff6ee, #f3dfe8)"
+  ];
+
+  function rainPetals(){
+    if(reduceMotion) return;
+    for(var i = 0; i < 30; i++){
+      (function(delay){
+        window.setTimeout(function(){
+          var el = document.createElement("span");
+          el.className = "petal";
+          var w = 8 + Math.random() * 6;
+          el.style.width = w.toFixed(1) + "px";
+          el.style.height = (w * 1.7).toFixed(1) + "px";
+          el.style.left = (Math.random() * 100).toFixed(1) + "%";
+          el.style.background = PETAL_COLORS[Math.floor(Math.random() * PETAL_COLORS.length)];
+          el.style.setProperty("--sway", Math.round(15 + Math.random() * 30) + "px");
+          el.style.setProperty("--rot", Math.round((Math.random() < .5 ? -1 : 1) * (180 + Math.random() * 360)) + "deg");
+          var dur = 4 + Math.random() * 2.5;
+          el.style.animationDuration = dur.toFixed(2) + "s";
+          petalRain.appendChild(el);
+          window.setTimeout(function(){ el.remove(); }, dur * 1000 + 100);
+        }, delay);
+      })(Math.random() * 2600);
+    }
+  }
+
+  var faceSorry = document.querySelector(".face-sorry");
+
   function resetEnvelope(){
     closeVoucher();
+    faceSorry.classList.remove("glad");
     if(letterTimer){ window.clearTimeout(letterTimer); letterTimer = null; }
     envelope.classList.remove("open");
     envelopeWrap.classList.remove("gone");
@@ -2411,6 +2538,7 @@
     letterTimer = window.setTimeout(function(){
       envelopeWrap.classList.add("gone");
       letter.classList.add("show");
+      rainPetals();
     }, reduceMotion ? 0 : 1300);
   });
 
@@ -2447,6 +2575,7 @@
       window.requestAnimationFrame(function(){ voucherOverlay.classList.add("show"); });
     });
     buzz([20, 40, 20, 40, 30]);
+    faceSorry.classList.add("glad");
     if(!reduceMotion) voucherBurst();
   }
 
